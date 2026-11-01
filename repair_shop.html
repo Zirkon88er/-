@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Ремонт-Сервис</title>
+<style>
+:root{
+  --blue:#2563eb;--blue-d:#1d4ed8;--blue-l:#dbeafe;
+  --green:#16a34a;--green-d:#15803d;
+  --red:#dc2626;--red-d:#b91c1c;
+  --g50:#f9fafb;--g100:#f3f4f6;--g200:#e5e7eb;--g300:#d1d5db;--g400:#9ca3af;--g500:#6b7280;--g600:#4b5563;--g700:#374151;--g800:#1f2937;--g900:#111827;
+  --radius:12px;--shadow:0 1px 2px rgba(0,0,0,.06),0 4px 14px rgba(0,0,0,.06);
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:var(--g50);color:var(--g800);min-height:100vh;display:flex;flex-direction:column;line-height:1.45;font-size:15px}
+[hidden]{display:none!important}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.skip-link{position:absolute;left:8px;top:-48px;background:#fff;color:var(--blue);padding:8px 12px;border-radius:6px;z-index:100;font-weight:600}
+.skip-link:focus{top:8px}
+:focus-visible{outline:3px solid #93c5fd;outline-offset:2px}
+h1,h2,h3,h4{margin:0;line-height:1.25;color:var(--g900)}
+h2:focus{outline:none}
+p{margin:0}
+
+/* --- шапка --- */
+.topbar{background:var(--blue);color:#fff;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.topbar-inner{max-width:1200px;margin:0 auto;padding:0 16px;min-height:60px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-weight:700;font-size:1.2rem;letter-spacing:-.01em;white-space:nowrap;color:#fff}
+.nav-menu{display:flex;align-items:center;gap:10px;min-width:0}
+.user-chip{background:rgba(255,255,255,.18);padding:4px 12px;border-radius:999px;font-size:.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:45vw}
+
+main{flex:1;width:100%;max-width:1200px;margin:0 auto;padding:28px 16px 48px}
+.view-title{font-size:1.75rem;margin-bottom:20px}
+.stack>*+*{margin-top:24px}
+.card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;min-width:0}
+.card-title{font-size:1.1rem;font-weight:600;padding-bottom:10px;margin-bottom:16px;border-bottom:1px solid var(--g200);display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.card-title small{font-weight:400;font-size:.85rem;color:var(--g500)}
+.narrow{max-width:420px;margin:0 auto}
+.grid-2,.grid-stats,.parts-layout{display:grid;gap:20px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:768px){
+  .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .parts-layout{grid-template-columns:minmax(0,1fr) minmax(0,2fr)}
+}
+.grid-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (min-width:900px){.grid-stats{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* --- формы --- */
+.form>*+*{margin-top:14px}
+.field label,.label{display:block;font-size:.85rem;font-weight:500;color:var(--g700);margin-bottom:4px}
+input,select,textarea,button{font:inherit;color:inherit}
+.input,select.input,textarea.input{display:block;width:100%;padding:8px 10px;border:1px solid var(--g300);border-radius:8px;background:#fff;transition:border-color .15s,box-shadow .15s}
+textarea.input{resize:vertical;min-height:72px}
+.input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.2)}
+.input-sm{padding:5px 8px;font-size:.9rem}
+.hint{font-size:.78rem;color:var(--g500);margin-top:3px}
+.panel{background:var(--g50);border:1px solid var(--g200);border-radius:10px;padding:16px}
+.panel h4{font-size:1rem;margin-bottom:4px}
+.row{display:flex;gap:8px;align-items:stretch}
+.row>.input{flex:1;min-width:0}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 14px;border:1px solid transparent;border-radius:8px;font-size:.9rem;font-weight:500;cursor:pointer;transition:background-color .15s,opacity .15s;white-space:nowrap;text-decoration:none;line-height:1.2}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.btn-block{width:100%}
+.btn-sm{padding:5px 10px;font-size:.82rem}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover:not(:disabled){background:var(--blue-d)}
+.btn-success{background:var(--green);color:#fff}.btn-success:hover:not(:disabled){background:var(--green-d)}
+.btn-danger{background:var(--red);color:#fff}.btn-danger:hover:not(:disabled){background:var(--red-d)}
+.btn-ghost{background:#fff;border-color:var(--g300);color:var(--g700)}.btn-ghost:hover:not(:disabled){background:var(--g100)}
+.btn-link{background:none;border:none;padding:0;color:var(--blue);cursor:pointer;font-size:inherit}
+.btn-link:hover{text-decoration:underline}
+.btn-nav{background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.35)}.btn-nav:hover{background:rgba(255,255,255,.28)}
+.btn-logout{background:var(--red);color:#fff}.btn-logout:hover{background:var(--red-d)}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+.muted{color:var(--g500)}
+.test-accounts{font-size:.8rem;color:var(--g600);background:var(--g100);border-radius:8px;padding:10px 12px;margin-top:16px}
+.test-accounts table{margin:4px auto 0;border-collapse:collapse}
+.test-accounts td{padding:1px 8px}
+.test-accounts code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.95em}
+
+/* --- фильтры --- */
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:16px}
+.toolbar .field{flex:1 1 180px;min-width:0}
+.toolbar .field-narrow{flex:0 1 200px}
+.check{display:inline-flex;align-items:center;gap:6px;font-size:.88rem;color:var(--g700);padding:8px 0;cursor:pointer}
+.check input{width:16px;height:16px}
+
+/* --- статусы --- */
+.badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.78rem;font-weight:600;white-space:nowrap}
+.s0{background:#f3f4f6;color:#374151}
+.s1{background:#fef9c3;color:#854d0e}
+.s2{background:#ffedd5;color:#9a3412}
+.s3{background:#dcfce7;color:#166534}
+.s4{background:#dbeafe;color:#1e40af}
+
+/* --- карточки заявок --- */
+.cards{display:grid;gap:14px}
+.req-card{border:1px solid var(--g200);border-radius:10px;padding:16px;background:var(--g50)}
+.req-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px}
+.req-head h4{font-size:1.05rem;overflow-wrap:anywhere}
+.req-id{font-size:.75rem;font-weight:700;color:var(--g500);letter-spacing:.02em}
+.meta{display:flex;flex-wrap:wrap;gap:4px 18px;margin:0 0 10px;font-size:.82rem;color:var(--g600)}
+.meta div{display:flex;gap:4px}
+.meta dt{color:var(--g500)}
+.meta dd{margin:0;font-weight:500;color:var(--g700)}
+.req-desc{background:#fff;border:1px solid var(--g200);border-radius:8px;padding:8px 10px;font-size:.92rem;color:var(--g700);white-space:pre-wrap;overflow-wrap:anywhere}
+.req-comment{margin-top:10px;font-size:.9rem;overflow-wrap:anywhere;white-space:pre-wrap}
+.req-comment strong{color:var(--g700)}
+.req-controls{display:grid;gap:12px;margin-top:12px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:768px){.req-controls{grid-template-columns:minmax(0,1fr) minmax(0,2fr)}}
+.history{margin-top:10px;font-size:.84rem}
+.history summary{cursor:pointer;color:var(--blue);width:max-content}
+.history ol{margin:6px 0 0;padding-left:20px;color:var(--g600)}
+.history li+li{margin-top:2px}
+.empty{color:var(--g500);text-align:center;padding:18px 8px}
+
+/* --- таблицы --- */
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.table-scroll{max-height:280px;overflow-y:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:.9rem}
+.tbl th{background:var(--g50);text-align:left;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.03em;color:var(--g500);padding:9px 12px;border-bottom:1px solid var(--g200);position:sticky;top:0;z-index:1}
+.tbl td{padding:10px 12px;border-bottom:1px solid var(--g200);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl .num{white-space:nowrap}
+.tbl .wrap{overflow-wrap:anywhere;min-width:120px}
+.tbl .actions{white-space:nowrap;text-align:right}
+.tbl .actions .btn+.btn{margin-left:6px}
+.cell-sub{display:block;font-size:.78rem;color:var(--g500);max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.low{color:var(--red);font-weight:700}
+.tbl select.input{min-width:150px}
+.tbl .input-sm{min-width:70px}
+@media (max-width:640px){
+  .tbl.stackable thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+  .tbl.stackable tr{display:block;border:1px solid var(--g200);border-radius:10px;margin-bottom:10px;padding:6px 0;background:#fff}
+  .tbl.stackable td{display:flex;justify-content:space-between;align-items:center;gap:12px;border:none;padding:6px 12px;text-align:right}
+  .tbl.stackable td::before{content:attr(data-label);font-weight:600;color:var(--g500);font-size:.78rem;text-transform:uppercase;text-align:left;flex-shrink:0}
+  .tbl.stackable td.actions{justify-content:flex-end}
+  .tbl.stackable td.actions::before{content:none}
+  .tbl.stackable td.empty{display:block;text-align:center}
+  .tbl.stackable td.empty::before{content:none}
+  .tbl.stackable .cell-sub{max-width:200px}
+  .tbl.stackable select.input,.tbl.stackable .input-sm{max-width:60%}
+  .view-title{font-size:1.4rem}
+  .card{padding:16px}
+}
+
+/* --- статистика --- */
+.stat{text-align:center;padding:18px 12px}
+.stat-label{font-size:.85rem;color:var(--g600);font-weight:500}
+.stat-value{font-size:2.4rem;font-weight:700;color:var(--blue);line-height:1.1;margin-top:4px}
+.stat-value.warn{color:var(--red)}
+.bars{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.bar-row{display:grid;grid-template-columns:minmax(100px,140px) 1fr 36px;gap:10px;align-items:center;font-size:.88rem}
+.bar-track{background:var(--g100);border-radius:6px;height:22px;overflow:hidden}
+.bar-fill{height:100%;border-radius:6px;min-width:2px;transition:width .4s ease}
+.bar-count{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.f0{background:#9ca3af}.f1{background:#eab308}.f2{background:#f97316}.f3{background:#22c55e}.f4{background:#3b82f6}
+
+/* --- уведомления --- */
+.toasts{position:fixed;top:72px;right:16px;left:auto;z-index:50;display:flex;flex-direction:column;gap:8px;max-width:min(380px,calc(100vw - 32px))}
+.toast{display:flex;align-items:flex-start;gap:10px;color:#fff;padding:12px 14px;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.18);animation:slideIn .3s ease-out both;overflow-wrap:anywhere}
+.toast-success{background:#16a34a}.toast-error{background:#dc2626}.toast-info{background:#2563eb}
+.toast-msg{flex:1}
+.toast-close{background:none;border:none;color:#fff;font-size:1.2rem;line-height:1;cursor:pointer;opacity:.8;padding:0 2px}
+.toast-close:hover{opacity:1}
+.toast.hiding{animation:fadeOut .3s ease-out forwards}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:none;opacity:1}}
+@keyframes fadeOut{to{opacity:0;transform:translateX(20px)}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+.loading{text-align:center;color:var(--g500);padding:40px}
+</style>
+</head>
+<body>
+<a href="#main" class="skip-link">Перейти к содержимому</a>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <span class="brand"><span aria-hidden="true">⚙️</span> Ремонт-Сервис</span>
+    <nav class="nav-menu" id="nav-menu" aria-label="Пользователь"></nav>
+  </div>
+</header>
+
+<div id="toast-container" class="toasts" aria-live="polite" aria-atomic="false"></div>
+
+<main id="main">
+  <noscript><p class="loading">Для работы приложения нужен JavaScript.</p></noscript>
+  <p id="app-loading" class="loading">Загрузка…</p>
+
+  <!-- Вход -->
+  <section id="view-login" class="view" hidden aria-labelledby="login-title">
+    <div class="card narrow">
+      <h2 id="login-title" class="view-title center" tabindex="-1">Вход в систему</h2>
+      <form id="login-form" class="form" novalidate>
+        <div class="field">
+          <label for="login-username">Логин</label>
+          <input class="input" type="text" id="login-username" name="username" autocomplete="username" required maxlength="32">
+        </div>
+        <div class="field">
+          <label for="login-password">Пароль</label>
+          <input class="input" type="password" id="login-password" name="password" autocomplete="current-password" required maxlength="128">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Войти</button>
+      </form>
+      <p class="mt center">Нет аккаунта? <button type="button" class="btn-link" data-goto="register">Зарегистрироваться</button></p>
+      <div class="test-accounts">
+        <div class="center">Тестовые аккаунты:</div>
+        <table>
+          <tr><td>Администратор</td><td><code>admin</code> / <code>admin123</code></td></tr>
+          <tr><td>Мастер</td><td><code>master</code> / <code>master123</code></td></tr>
+          <tr><td>Мастер 2</td><td><code>master2</code> / <code>master123</code></td></tr>
+          <tr><td>Клиент</td><td><code>client1</code> / <code>client123</code></td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Регистрация -->
+  <section id="view-register" class="view" hidden aria-labelledby="register-title">
+    <div class="card narrow">
+      <h2 id="register-title" class="view-title center" tabindex="-1">Регистрация</h2>
+      <form id="register-form" class="form" novalidate>
+        <div class="field">
+          <label for="reg-username">Логин</label>
+          <input class="input" type="text" id="reg-username" autocomplete="username" required minlength="3" maxlength="32" aria-describedby="reg-username-hint">
+          <p class="hint" id="reg-username-hint">3–32 символа: буквы, цифры, «_», «.», «-»</p>
+        </div>
+        <div class="field">
+          <label for="reg-password">Пароль</label>
+          <input class="input" type="password" id="reg-password" autocomplete="new-password" required minlength="6" maxlength="128" aria-describedby="reg-password-hint">
+          <p class="hint" id="reg-password-hint">Не менее 6 символов</p>
+        </div>
+        <div class="field">
+          <label for="reg-password2">Повторите пароль</label>
+          <input class="input" type="password" id="reg-password2" autocomplete="new-password" required maxlength="128">
+        </div>
+        <button type="submit" class="btn btn-success btn-block">Зарегистрироваться</button>
+      </form>
+      <p class="mt center">Уже есть аккаунт? <button type="button" class="btn-link" data-goto="login">Войти</button></p>
+    </div>
+  </section>
+
+  <!-- Клиент -->
+  <section id="view-client" class="view stack" hidden aria-labelledby="client-title">
+    <h2 id="client-title" class="view-title" tabindex="-1">Личный кабинет клиента</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h3 class="card-title">Создать заявку на ремонт</h3>
+        <form id="create-request-form" class="form" novalidate>
+          <div class="field">
+            <label for="req-device">Тип устройства</label>
+            <input class="input" type="text" id="req-device" placeholder="Например: смартфон, ноутбук" required maxlength="100">
+          </div>
+          <div class="field">
+            <label for="req-desc">Описание неисправности</label>
+            <textarea class="input" id="req-desc" rows="3" required maxlength="1000"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Отправить заявку</button>
+        </form>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Каталог услуг</h3>
+        <div class="table-wrap table-scroll">
+          <table class="tbl stackable">
+            <caption class="sr-only">Услуги и ориентировочные цены</caption>
+            <thead><tr><th scope="col">Услуга</th><th scope="col">Ориентировочная цена</th></tr></thead>
+            <tbody id="client-services-list"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3 class="card-title">Мои заявки <small id="client-requests-count"></small></h3>
+      <div class="toolbar">
+        <div class="field field-narrow">
+          <label for="client-filter-status">Статус</label>
+          <select class="input" id="client-filter-status" data-status-filter></select>
+        </div>
+      </div>
+      <div id="client-requests-list" class="cards"></div>
+    </div>
+  </section>
+
+  <!-- Мастер -->
+  <section id="view-master" class="view stack" hidden aria-labelledby="master-title">
+    <h2 id="master-title" class="view-title" tabindex="-1">Рабочее место мастера</h2>
+    <div class="card">
+      <h3 class="card-title">Назначенные заявки <small id="master-requests-count"></small></h3>
+      <div class="toolbar">
+        <div class="field">
+          <label for="master-filter-q">Поиск</label>
+          <input class="input" type="search" id="master-filter-q" placeholder="№, устройство, клиент, описание…">
+        </div>
+        <div class="field field-narrow">
+          <label for="master-filter-status">Статус</label>
+          <select class="input" id="master-filter-status" data-status-filter></select>
+        </div>
+        <label class="check"><input type="checkbox" id="master-hide-done" checked> Скрыть выданные</label>
+      </div>
+      <div id="master-requests-list" class="cards"></div>
+    </div>
+  </section>
+
+  <!-- Администратор -->
+  <section id="view-admin" class="view stack" hidden aria-labelledby="admin-title">
+    <h2 id="admin-title" class="view-title" tabindex="-1">Панель администратора</h2>
+    <div class="grid-stats">
+      <div class="card stat"><div class="stat-label">Всего заявок</div><div class="stat-value" id="stat-total">0</div></div>
+      <div class="card stat"><div class="stat-label">В работе</div><div class="stat-value" id="stat-active">0</div></div>
+      <div class="card stat"><div class="stat-label">Без мастера</div><div class="stat-value" id="stat-unassigned">0</div></div>
+      <div class="card stat"><div class="stat-label">Мало на складе</div><div class="stat-value" id="stat-lowstock">0</div></div>
+    </div>
+    <div class="card">
+      <h3 class="card-title">Статусы заявок</h3>
+      <ul class="bars" id="status-chart" aria-label="Количество заявок по статусам"></ul>
+    </div>
+    <div class="card">
+      <h3 class="card-title">Все заявки <small id="admin-requests-count"></small></h3>
+      <div class="toolbar">
+        <div class="field">
+          <label for="admin-filter-q">Поиск</label>
+          <input class="input" type="search" id="admin-filter-q" placeholder="№, клиент, устройство, описание…">
+        </div>
+        <div class="field field-narrow">
+          <label for="admin-filter-status">Статус</label>
+          <select class="input" id="admin-filter-status" data-status-filter></select>
+        </div>
+        <div class="field field-narrow">
+          <label for="admin-filter-master">Мастер</label>
+          <select class="input" id="admin-filter-master"></select>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="tbl stackable">
+          <caption class="sr-only">Все заявки</caption>
+          <thead><tr>
+            <th scope="col">№</th><th scope="col">Создана</th><th scope="col">Клиент</th>
+            <th scope="col">Устройство</th><th scope="col">Статус</th><th scope="col">Мастер</th>
+          </tr></thead>
+          <tbody id="admin-requests-list"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h3 class="card-title">Учёт запчастей на складе <small id="parts-count"></small></h3>
+      <div class="parts-layout">
+        <form id="add-part-form" class="form panel" novalidate>
+          <h4>Добавить запчасть</h4>
+          <div class="field">
+            <label for="part-name">Название</label>
+            <input class="input" type="text" id="part-name" required maxlength="100">
+          </div>
+          <div class="field">
+            <label for="part-qty">Количество, шт.</label>
+            <input class="input" type="number" id="part-qty" required min="0" step="1" inputmode="numeric">
+          </div>
+          <div class="field">
+            <label for="part-price">Цена, ₽</label>
+            <input class="input" type="number" id="part-price" required min="0" step="0.01" inputmode="decimal">
+          </div>
+          <button type="submit" class="btn btn-success btn-block">Добавить</button>
+        </form>
+        <div class="table-wrap">
+          <table class="tbl stackable">
+            <caption class="sr-only">Запчасти на складе</caption>
+            <thead><tr><th scope="col">Название</th><th scope="col">Остаток</th><th scope="col">Цена</th><th scope="col"><span class="sr-only">Действия</span></th></tr></thead>
+            <tbody id="admin-parts-list"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+'use strict';
+(() => {
+  // ================= 1. Константы =================
+  const DB_KEY = 'repairShopDB';
+  const SESSION_KEY = 'repairShopSession';
+  const LEGACY_SESSION_KEY = 'currentUser';      // старая версия хранила тут весь объект пользователя вместе с паролем
+  const DB_VERSION = 2;
+  const STATUSES = ['Принята', 'В диагностике', 'В ремонте', 'Готова к выдаче', 'Выдана'];
+  const DONE_STATUS = 'Выдана';
+  const ROLE_LABELS = { admin: 'Администратор', master: 'Мастер', client: 'Клиент' };
+  const LOW_STOCK = 10;
+  const LIMITS = { userMin: 3, userMax: 32, passMin: 6, passMax: 128, device: 100, desc: 1000, comment: 500, partName: 100, qtyMax: 1e6, priceMax: 1e8 };
+  const USERNAME_RE = /^[A-Za-zА-Яа-яЁё0-9_.-]+$/;
+  const DEFAULT_PASSWORDS = { admin: 'admin123', master: 'master123', master2: 'master123', client1: 'client123' };
+  const MAX_LOGIN_ATTEMPTS = 5, LOCK_MS = 30000;
+
+  // ================= 2. Утилиты =================
+  const $ = (sel) => document.querySelector(sel);
+  const nowISO = () => new Date().toISOString();
+  const moneyFmt = new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 2 });
+  const dateFmt = new Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  const fmtMoney = (v) => moneyFmt.format(Number(v) || 0);
+  const fmtDate = (iso) => { const d = new Date(iso); return isNaN(d) ? '—' : dateFmt.format(d); };
+  const byNewest = (a, b) => String(b.createdAt).localeCompare(String(a.createdAt)) || (b.id - a.id);
+
+  const PROPS = new Set(['value', 'checked', 'disabled', 'selected', 'required', 'hidden', 'open']);
+  /** Безопасное построение DOM: весь пользовательский текст попадает в textContent, а не в innerHTML. */
+  function h(tag, props, ...children) {
+    const el = document.createElement(tag);
+    if (props) {
+      for (const [k, v] of Object.entries(props)) {
+        if (v == null || v === false) continue;
+        if (k === 'class') el.className = v;
+        else if (k.startsWith('on') && typeof v === 'function') el.addEventListener(k.slice(2), v);
+        else if (PROPS.has(k)) el[k] = v;
+        else el.setAttribute(k, v === true ? '' : String(v));
+      }
+    }
+    for (const c of children.flat(Infinity)) {
+      if (c == null || c === false) continue;
+      el.append(c instanceof Node ? c : document.createTextNode(String(c)));
+    }
+    return el;
+  }
+
+  // ================= 3. Хранилище (с защитой от ошибок) =================
+  function makeStore(getter) {
+    let area = null;
+    try { area = getter(); const t = '__rs_test__'; area.setItem(t, '1'); area.removeItem(t); } catch (e) { area = null; }
+    return {
+      available: !!area,
+      get(k) { try { return area ? area.getItem(k) : null; } catch (e) { return null; } },
+      set(k, v) { if (!area) return true; try { area.setItem(k, v); return true; } catch (e) { console.warn('Не удалось сохранить данные:', e); return false; } },
+      remove(k) { try { area && area.removeItem(k); } catch (e) { /* ignore */ } }
+    };
+  }
+  const local = makeStore(() => window.localStorage);
+  const session = makeStore(() => window.sessionStorage);
+
+  // ================= 4. Хэширование паролей =================
+  // Демо-уровень: соль + SHA-256 (SubtleCrypto, с JS-резервом для небезопасного контекста, напр. http://).
+  // В реальной системе — проверка на сервере и медленный KDF (Argon2/bcrypt/PBKDF2).
+  const enc = new TextEncoder();
+  const toHex = (buf) => Array.from(new Uint8Array(buf), (b) => b.toString(16).padStart(2, '0')).join('');
+
+  function sha256Fallback(bytes) {
+    const K = [], H = [];
+    const frac = (x) => ((x - Math.floor(x)) * 4294967296) >>> 0;
+    for (let n = 2, found = 0; found < 64; n++) {
+      let prime = true;
+      for (let d = 2; d * d <= n; d++) if (n % d === 0) { prime = false; break; }
+      if (!prime) continue;
+      if (found < 8) H[found] = frac(Math.sqrt(n));
+      K[found++] = frac(Math.cbrt(n));
+    }
+    const len = bytes.length, total = ((len + 9 + 63) >> 6) << 6;
+    const buf = new Uint8Array(total); buf.set(bytes); buf[len] = 0x80;
+    const dv = new DataView(buf.buffer);
+    dv.setUint32(total - 8, Math.floor(len / 0x20000000)); dv.setUint32(total - 4, (len << 3) >>> 0);
+    const W = new Uint32Array(64);
+    const rotr = (x, n) => (x >>> n) | (x << (32 - n));
+    for (let off = 0; off < total; off += 64) {
+      for (let i = 0; i < 16; i++) W[i] = dv.getUint32(off + i * 4);
+      for (let i = 16; i < 64; i++) {
+        const a = W[i - 15], b = W[i - 2];
+        W[i] = W[i - 16] + (rotr(a, 7) ^ rotr(a, 18) ^ (a >>> 3)) + W[i - 7] + (rotr(b, 17) ^ rotr(b, 19) ^ (b >>> 10));
+      }
+      let [a, b, c, d, e, f, g, hh] = H;
+      for (let i = 0; i < 64; i++) {
+        const t1 = (hh + (rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25)) + ((e & f) ^ (~e & g)) + K[i] + W[i]) | 0;
+        const t2 = ((rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22)) + ((a & b) ^ (a & c) ^ (b & c))) | 0;
+        hh = g; g = f; f = e; e = (d + t1) | 0; d = c; c = b; b = a; a = (t1 + t2) | 0;
+      }
+      H[0] = (H[0] + a) >>> 0; H[1] = (H[1] + b) >>> 0; H[2] = (H[2] + c) >>> 0; H[3] = (H[3] + d) >>> 0;
+      H[4] = (H[4] + e) >>> 0; H[5] = (H[5] + f) >>> 0; H[6] = (H[6] + g) >>> 0; H[7] = (H[7] + hh) >>> 0;
+    }
+    const out = new Uint8Array(32), odv = new DataView(out.buffer);
+    H.forEach((v, i) => odv.setUint32(i * 4, v));
+    return out;
+  }
+  async function sha256Hex(str) {
+    const data = enc.encode(str);
+    if (window.crypto && crypto.subtle) {
+      try { return toHex(await crypto.subtle.digest('SHA-256', data)); } catch (e) { /* fallback ниже */ }
+    }
+    return toHex(sha256Fallback(data));
+  }
+  function randomSalt() {
+    const a = new Uint8Array(16);
+    if (window.crypto && crypto.getRandomValues) crypto.getRandomValues(a);
+    else for (let i = 0; i < a.length; i++) a[i] = Math.floor(Math.random() * 256);
+    return toHex(a);
+  }
+  const hashPassword = (pw, salt) => sha256Hex(salt + ':' + pw);
+  async function makeCredentials(pw) { const salt = randomSalt(); return { salt, passHash: await hashPassword(pw, salt) }; }
+  async function verifyPassword(user, pw) {
+    if (!user || !user.salt || !user.passHash) { await hashPassword(pw, 'dummy'); return false; }
+    return (await hashPassword(pw, user.salt)) === user.passHash;
+  }
+
+  // ================= 5. База данных: создание, миграция, сохранение =================
+  let db = null;
+  let userCache = null;
+  const userById = (id) => {
+    if (!userCache) userCache = new Map(db.users.map((u) => [u.id, u]));
+    return userCache.get(id) || null;
+  };
+  const userName = (id, fallback = '—') => (userById(id) || {}).username || fallback;
+
+  async function createSeedDB() {
+    const t = nowISO();
+    const seedUsers = [[1, 'admin', 'admin'], [2, 'master', 'master'], [3, 'client1', 'client'], [4, 'master2', 'master']];
+    const users = [];
+    for (const [id, username, role] of seedUsers) {
+      users.push({ id, username, role, createdAt: t, ...(await makeCredentials(DEFAULT_PASSWORDS[username])) });
+    }
+    return {
+      version: DB_VERSION,
+      seq: 4,
+      users,
+      services: [
+        { id: 1, name: 'Замена экрана смартфона', price: 3500 },
+        { id: 2, name: 'Чистка ноутбука от пыли', price: 1500 },
+        { id: 3, name: 'Переустановка ОС', price: 1200 },
+        { id: 4, name: 'Замена аккумулятора', price: 2000 }
+      ],
+      parts: [
+        { id: 1, name: 'Дисплей iPhone 13', qty: 5, price: 8000 },
+        { id: 2, name: 'АКБ Samsung', qty: 12, price: 1500 },
+        { id: 3, name: 'Термопаста (тюбик)', qty: 50, price: 800 }
+      ],
+      requests: [{
+        id: 1, clientId: 3, masterId: null, device: 'Ноутбук ASUS', desc: 'Греется и выключается',
+        status: STATUSES[0], comment: '', createdAt: t, updatedAt: t,
+        history: [{ at: t, by: 3, text: 'Заявка создана' }]
+      }]
+    };
+  }
+
+  /** Приводит любые (в т.ч. старые v1) данные к актуальной схеме. Бросает исключение, если данные непригодны. */
+  async function migrate(raw) {
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw new Error('Неверный формат данных');
+    const version = Number(raw.version) || 1;
+    if (version > DB_VERSION) throw new Error('Данные созданы более новой версией приложения');
+    if (!Array.isArray(raw.users)) throw new Error('Нет списка пользователей');
+    const arr = (x) => (Array.isArray(x) ? x.filter((o) => o && typeof o === 'object' && o.id != null) : []);
+    const str = (x, max) => String(x == null ? '' : x).slice(0, max);
+    const num = (x, min = 0) => { const n = Number(x); return Number.isFinite(n) && n >= min ? n : min; };
+    const t = nowISO();
+
+    const users = [];
+    for (const u of arr(raw.users)) {
+      if (typeof u.username !== 'string' || !ROLE_LABELS[u.role]) continue;
+      const user = { id: u.id, username: u.username, role: u.role, createdAt: u.createdAt || t, salt: u.salt, passHash: u.passHash };
+      if (typeof u.password === 'string' && !u.passHash) {
+        // v1: пароли хранились открытым текстом. Демо-аккаунты с паролем '123' получают новые пароли из подсказки.
+        let pw = u.password;
+        if (pw === '123' && DEFAULT_PASSWORDS[u.username]) pw = DEFAULT_PASSWORDS[u.username];
+        Object.assign(user, await makeCredentials(pw));
+      }
+      users.push(user);
+    }
+    const ids = new Set(users.map((u) => u.id));
+    const requests = arr(raw.requests).map((r) => {
+      const status = STATUSES.includes(r.status) ? r.status : STATUSES[0];
+      const createdAt = r.createdAt || t;
+      return {
+        id: r.id,
+        clientId: r.clientId ?? null,
+        masterId: r.masterId != null && ids.has(r.masterId) ? r.masterId : (r.masterId ?? null),
+        device: str(r.device, LIMITS.device), desc: str(r.desc, LIMITS.desc), status,
+        comment: str(r.comment, LIMITS.comment),
+        createdAt, updatedAt: r.updatedAt || createdAt,
+        history: Array.isArray(r.history) ? r.history.filter((x) => x && typeof x === 'object')
+          : [{ at: createdAt, by: r.clientId ?? null, text: 'Заявка создана' }]
+      };
+    });
+    const services = arr(raw.services).map((s) => ({ id: s.id, name: str(s.name, 200), price: num(s.price) }));
+    const parts = arr(raw.parts).map((p) => ({ id: p.id, name: str(p.name, LIMITS.partName), qty: Math.floor(num(p.qty)), price: num(p.price) }));
+    const maxId = Math.max(0, ...[users, requests, services, parts].flat().map((o) => Number(o.id) || 0));
+    return { version: DB_VERSION, seq: Math.max(Number(raw.seq) || 0, maxId), users, services, parts, requests };
+  }
+
+  function persist() { return local.set(DB_KEY, JSON.stringify(db)); }
+  const nextId = () => ++db.seq;
+
+  /** Изменение данных «транзакцией»: при ошибке сохранения (квота и т.п.) состояние откатывается. */
+  function commit(mutator) {
+    const snapshot = JSON.stringify(db);
+    try {
+      mutator();
+    } catch (e) {
+      db = JSON.parse(snapshot); userCache = null;
+      console.warn(e);
+      toast('Не удалось выполнить действие', 'error');
+      return false;
+    }
+    userCache = null;
+    if (!persist()) {
+      db = JSON.parse(snapshot); userCache = null;
+      toast('Не удалось сохранить данные: хранилище браузера переполнено или недоступно', 'error');
+      render();
+      return false;
+    }
+    return true;
+  }
+
+  async function loadDB() {
+    const notices = [];
+    if (!local.available) notices.push('Хранилище браузера недоступно — данные не сохранятся после закрытия страницы');
+    const rawStr = local.get(DB_KEY);
+    if (rawStr == null) {
+      db = await createSeedDB();
+    } else {
+      try {
+        db = await migrate(JSON.parse(rawStr));
+      } catch (e) {
+        console.warn('Повреждённые данные в localStorage:', e);
+        const backupKey = DB_KEY + '_backup_' + Date.now();
+        local.set(backupKey, rawStr);
+        db = await createSeedDB();
+        notices.push('Сохранённые данные повреждены и были сброшены. Резервная копия: ' + backupKey);
+      }
+    }
+    userCache = null;
+    persist();
+    return notices;
+  }
+
+  // ================= 6. Сессия =================
+  let sessionUserId = null;
+  function restoreSession() {
+    session.remove(LEGACY_SESSION_KEY);
+    try {
+      const s = JSON.parse(session.get(SESSION_KEY) || 'null');
+      sessionUserId = s && s.userId != null ? s.userId : null;
+    } catch (e) { sessionUserId = null; }
+  }
+  function setSession(userId) {
+    sessionUserId = userId;
+    if (userId == null) session.remove(SESSION_KEY);
+    else session.set(SESSION_KEY, JSON.stringify({ userId }));
+  }
+  /** Пользователь всегда берётся из актуальной БД, а не из копии в sessionStorage. */
+  function me() {
+    if (sessionUserId == null) return null;
+    const u = userById(sessionUserId);
+    if (!u) setSession(null);
+    return u;
+  }
+  function requireRole(role) {
+    const u = me();
+    if (!u || u.role !== role) { toast('Недостаточно прав для этого действия', 'error'); render(); return null; }
+    return u;
+  }
+
+  // ================= 7. UI: уведомления, навигация =================
+  const toastContainer = $('#toast-container');
+  function toast(message, type = 'success') {
+    const el = h('div', { class: 'toast toast-' + type },
+      h('span', { class: 'toast-msg' }, message),
+      h('button', { type: 'button', class: 'toast-close', 'aria-label': 'Закрыть уведомление', onclick: () => dismiss(el) }, '×'));
+    toastContainer.append(el);
+    while (toastContainer.children.length > 4) toastContainer.firstElementChild.remove();
+    setTimeout(() => dismiss(el), type === 'error' ? 5000 : 3000);
+  }
+  function dismiss(el) {
+    if (!el.isConnected || el.classList.contains('hiding')) return;
+    el.classList.add('hiding');
+    const done = () => el.remove();
+    el.addEventListener('animationend', done, { once: true });
+    setTimeout(done, 500);
+  }
+
+  let authView = 'login';
+  let activeView = null;
+  function showView(id) {
+    document.querySelectorAll('.view').forEach((v) => { v.hidden = v.id !== id; });
+    if (activeView !== id) {
+      const changedByUser = activeView !== null;
+      activeView = id;
+      const heading = document.querySelector('#' + id + ' h2');
+      if (heading) document.title = heading.textContent + ' — Ремонт-Сервис';
+      if (changedByUser && heading) heading.focus({ preventScroll: true });
+      window.scrollTo(0, 0);
+    }
+  }
+
+  function updateNav(user) {
+    const nav = $('#nav-menu');
+    if (!user) {
+      nav.replaceChildren(authView === 'login'
+        ? h('button', { type: 'button', class: 'btn btn-sm btn-nav', onclick: () => goAuth('register') }, 'Регистрация')
+        : h('button', { type: 'button', class: 'btn btn-sm btn-nav', onclick: () => goAuth('login') }, 'Войти'));
+      return;
+    }
+    nav.replaceChildren(
+      h('span', { class: 'user-chip', title: user.username }, user.username + ' · ' + ROLE_LABELS[user.role]),
+      h('button', { type: 'button', class: 'btn btn-sm btn-logout', onclick: logout }, 'Выйти'));
+  }
+
+  function goAuth(view) { authView = view; render(); }
+
+  // ================= 8. Маршрутизация =================
+  function render() {
+    const user = me();
+    updateNav(user);
+    if (!user) { showView('view-' + authView); return; }
+    showView('view-' + user.role);
+    ({ client: renderClient, master: renderMaster, admin: renderAdmin })[user.role]();
+  }
+
+  // ================= 9. Авторизация =================
+  const loginState = { failures: 0, lockedUntil: 0 };
+
+  $('#login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.currentTarget, btn = form.querySelector('button[type=submit]');
+    const wait = loginState.lockedUntil - Date.now();
+    if (wait > 0) { toast(`Слишком много попыток. Повторите через ${Math.ceil(wait / 1000)} с`, 'error'); return; }
+    const username = $('#login-username').value.trim();
+    const password = $('#login-password').value;
+    if (!username || !password) { toast('Введите логин и пароль', 'error'); return; }
+    btn.disabled = true;
+    try {
+      const user = db.users.find((u) => u.username.toLowerCase() === username.toLowerCase());
+      if (!(await verifyPassword(user, password))) {
+        if (++loginState.failures >= MAX_LOGIN_ATTEMPTS) { loginState.failures = 0; loginState.lockedUntil = Date.now() + LOCK_MS; }
+        toast('Неверный логин или пароль', 'error');
+        $('#login-password').select();
+        return;
+      }
+      loginState.failures = 0;
+      form.reset();
+      setSession(user.id);
+      toast(`Добро пожаловать, ${user.username}!`);
+      render();
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  $('#register-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.currentTarget, btn = form.querySelector('button[type=submit]');
+    const username = $('#reg-username').value.trim();
+    const password = $('#reg-password').value;
+    const password2 = $('#reg-password2').value;
+    const fail = (msg, sel) => { toast(msg, 'error'); $(sel).focus(); };
+    if (username.length < LIMITS.userMin || username.length > LIMITS.userMax) return fail(`Логин должен быть от ${LIMITS.userMin} до ${LIMITS.userMax} символов`, '#reg-username');
+    if (!USERNAME_RE.test(username)) return fail('Логин может содержать только буквы, цифры, «_», «.», «-»', '#reg-username');
+    if (password.length < LIMITS.passMin) return fail(`Пароль должен быть не короче ${LIMITS.passMin} символов`, '#reg-password');
+    if (password !== password2) return fail('Пароли не совпадают', '#reg-password2');
+    if (db.users.some((u) => u.username.toLowerCase() === username.toLowerCase())) return fail('Пользователь с таким логином уже существует', '#reg-username');
+
+    btn.disabled = true;
+    try {
+      const creds = await makeCredentials(password);
+      let newId;
+      const ok = commit(() => {
+        newId = nextId();
+        db.users.push({ id: newId, username, role: 'client', createdAt: nowISO(), ...creds });
+      });
+      if (!ok) return;
+      form.reset();
+      setSession(newId);
+      authView = 'login';
+      toast('Регистрация успешна! Добро пожаловать.');
+      render();
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  function logout() {
+    setSession(null);
+    authView = 'login';
+    ui.drafts.clear();
+    ui.editingPartId = null;
+    document.querySelectorAll('form').forEach((f) => f.reset());
+    document.querySelectorAll('.toolbar input[type=search]').forEach((i) => { i.value = ''; });
+    toast('Вы вышли из системы', 'info');
+    render();
+  }
+
+  document.querySelectorAll('[data-goto]').forEach((b) => b.addEventListener('click', () => goAuth(b.dataset.goto)));
+
+  // ================= 10. Общие элементы интерфейса =================
+  const ui = { drafts: new Map(), openHistory: new Set(), editingPartId: null };
+
+  const statusBadge = (s) => h('span', { class: 'badge s' + Math.max(0, STATUSES.indexOf(s)) }, s);
+  const emptyNote = (text) => h('p', { class: 'empty' }, text);
+  const metaItem = (label, value) => h('div', null, h('dt', null, label + ':'), h('dd', null, value));
+
+  function reqHeader(r) {
+    return h('div', { class: 'req-head' },
+      h('div', null, h('div', { class: 'req-id' }, 'Заявка №' + r.id), h('h4', null, r.device)),
+      statusBadge(r.status));
+  }
+  function historyBlock(r) {
+    if (!r.history || !r.history.length) return null;
+    return h('details', {
+      class: 'history', open: ui.openHistory.has(r.id),
+      ontoggle: (e) => { e.currentTarget.open ? ui.openHistory.add(r.id) : ui.openHistory.delete(r.id); }
+    },
+      h('summary', null, `История изменений (${r.history.length})`),
+      h('ol', null, r.history.slice().reverse().map((x) =>
+        h('li', null, h('time', { datetime: x.at }, fmtDate(x.at)), ' — ', String(x.text || ''),
+          x.by != null ? ` (${userName(x.by)})` : ''))));
+  }
+  function addHistory(r, by, text) {
+    const at = nowISO();
+    r.updatedAt = at;
+    (r.history || (r.history = [])).push({ at, by, text });
+  }
+  function matchesQuery(r, q) {
+    if (!q) return true;
+    return [String(r.id), r.device, r.desc, r.comment, userName(r.clientId, ''), userName(r.masterId, '')]
+      .some((s) => String(s).toLowerCase().includes(q));
+  }
+  const countLabel = (shown, total) => (shown === total ? `(${total})` : `(показано ${shown} из ${total})`);
+
+  // Заполняем фильтры статусов
+  document.querySelectorAll('[data-status-filter]').forEach((sel) => {
+    sel.replaceChildren(h('option', { value: '' }, 'Все статусы'), ...STATUSES.map((s) => h('option', { value: s }, s)));
+  });
+
+  // ================= 11. Клиент =================
+  function renderClient() {
+    const user = me();
+    $('#client-services-list').replaceChildren(...(db.services.length
+      ? db.services.map((s) => h('tr', null,
+          h('td', { 'data-label': 'Услуга', class: 'wrap' }, s.name),
+          h('td', { 'data-label': 'Цена', class: 'num' }, 'от ' + fmtMoney(s.price))))
+      : [h('tr', null, h('td', { colspan: 2, class: 'empty' }, 'Каталог пуст'))]));
+
+    const status = $('#client-filter-status').value;
+    const mine = db.requests.filter((r) => r.clientId === user.id);
+    const list = mine.filter((r) => !status || r.status === status).sort(byNewest);
+    $('#client-requests-count').textContent = mine.length ? countLabel(list.length, mine.length) : '';
+    $('#client-requests-list').replaceChildren(...(list.length
+      ? list.map(clientCard)
+      : [emptyNote(mine.length ? 'Нет заявок с выбранным статусом' : 'У вас пока нет заявок')]));
+  }
+
+  function clientCard(r) {
+    return h('article', { class: 'req-card' },
+      reqHeader(r),
+      h('dl', { class: 'meta' },
+        metaItem('Создана', fmtDate(r.createdAt)),
+        metaItem('Обновлена', fmtDate(r.updatedAt)),
+        metaItem('Мастер', r.masterId != null ? userName(r.masterId, 'удалён') : 'ещё не назначен')),
+      h('p', { class: 'req-desc' }, r.desc),
+      h('p', { class: 'req-comment' }, h('strong', null, 'Комментарий мастера: '), r.comment || '—'),
+      historyBlock(r));
+  }
+
+  $('#client-filter-status').addEventListener('change', renderClient);
+
+  $('#create-request-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const user = requireRole('client');
+    if (!user) return;
+    const device = $('#req-device').value.trim();
+    const desc = $('#req-desc').value.trim();
+    if (!device) { toast('Укажите тип устройства', 'error'); $('#req-device').focus(); return; }
+    if (!desc) { toast('Опишите неисправность', 'error'); $('#req-desc').focus(); return; }
+    let id;
+    const ok = commit(() => {
+      const t = nowISO();
+      id = nextId();
+      db.requests.push({
+        id, clientId: user.id, masterId: null,
+        device: device.slice(0, LIMITS.device), desc: desc.slice(0, LIMITS.desc),
+        status: STATUSES[0], comment: '', createdAt: t, updatedAt: t,
+        history: [{ at: t, by: user.id, text: 'Заявка создана' }]
+      });
+    });
+    if (!ok) return;
+    e.currentTarget.reset();
+    renderClient();
+    toast(`Заявка №${id} успешно создана!`);
+  });
+
+  // ================= 12. Мастер =================
+  function renderMaster() {
+    const user = me();
+    const q = $('#master-filter-q').value.trim().toLowerCase();
+    const status = $('#master-filter-status').value;
+    const hideDone = $('#master-hide-done').checked;
+    const assigned = db.requests.filter((r) => r.masterId === user.id);
+    const list = assigned
+      .filter((r) => (!status || r.status === status) && (!hideDone || status === DONE_STATUS || r.status !== DONE_STATUS) && matchesQuery(r, q))
+      .sort(byNewest);
+    $('#master-requests-count').textContent = assigned.length ? countLabel(list.length, assigned.length) : '';
+    $('#master-requests-list').replaceChildren(...(list.length
+      ? list.map(masterCard)
+      : [emptyNote(assigned.length ? 'Нет заявок, подходящих под фильтр' : 'Нет назначенных заявок')]));
+  }
+
+  function masterCard(r) {
+    const sid = 'status-' + r.id, cid = 'comment-' + r.id;
+    const select = h('select', { class: 'input', id: sid, onchange: (e) => updateRequestStatus(r.id, e.target.value) },
+      STATUSES.map((s) => h('option', { value: s }, s)));
+    select.value = r.status;
+    const draft = ui.drafts.get(r.id);
+    const input = h('input', {
+      class: 'input', type: 'text', id: cid, maxlength: LIMITS.comment, value: draft != null ? draft : r.comment,
+      placeholder: 'Что сделано, что нужно клиенту…',
+      oninput: (e) => ui.drafts.set(r.id, e.target.value)
+    });
+    return h('article', { class: 'req-card' },
+      reqHeader(r),
+      h('dl', { class: 'meta' },
+        metaItem('Клиент', userName(r.clientId, 'неизвестен')),
+        metaItem('Создана', fmtDate(r.createdAt)),
+        metaItem('Обновлена', fmtDate(r.updatedAt))),
+      h('p', { class: 'req-desc' }, r.desc),
+      h('div', { class: 'req-controls' },
+        h('div', null, h('label', { class: 'label', for: sid }, 'Статус'), select),
+        h('form', { onsubmit: (e) => { e.preventDefault(); saveComment(r.id, input.value); } },
+          h('label', { class: 'label', for: cid }, 'Комментарий клиенту'),
+          h('div', { class: 'row' }, input, h('button', { type: 'submit', class: 'btn btn-primary' }, 'Сохранить')))),
+      historyBlock(r));
+  }
+
+  function findOwnRequest(user, reqId) {
+    const r = db.requests.find((x) => x.id === reqId);
+    if (!r || r.masterId !== user.id) { toast('Заявка не найдена или снята с вас', 'error'); render(); return null; }
+    return r;
+  }
+
+  function updateRequestStatus(reqId, newStatus) {
+    const user = requireRole('master');
+    if (!user) return;
+    const r = findOwnRequest(user, reqId);
+    if (!r || !STATUSES.includes(newStatus) || r.status === newStatus) return;
+    if (commit(() => { r.status = newStatus; addHistory(r, user.id, 'Статус: ' + newStatus); })) {
+      toast(`Статус заявки №${reqId}: «${newStatus}»`);
+    }
+    renderMaster();
+  }
+
+  function saveComment(reqId, value) {
+    const user = requireRole('master');
+    if (!user) return;
+    const r = findOwnRequest(user, reqId);
+    if (!r) return;
+    const text = value.trim().slice(0, LIMITS.comment);
+    if (text === r.comment) { ui.drafts.delete(reqId); toast('Комментарий не изменился', 'info'); return; }
+    if (commit(() => { r.comment = text; addHistory(r, user.id, text ? 'Комментарий обновлён' : 'Комментарий удалён'); })) {
+      ui.drafts.delete(reqId);
+      toast(`Комментарий к заявке №${reqId} сохранён`);
+    }
+    renderMaster();
+  }
+
+  ['#master-filter-q', '#master-filter-status', '#master-hide-done'].forEach((s) =>
+    $(s).addEventListener(s === '#master-filter-q' ? 'input' : 'change', renderMaster));
+
+  // ================= 13. Администратор =================
+  const masters = () => db.users.filter((u) => u.role === 'master');
+
+  function renderAdmin() {
+    renderAdminStats();
+    renderMasterFilter();
+    renderAdminRequests();
+    renderParts();
+  }
+
+  function renderAdminStats() {
+    const total = db.requests.length;
+    const active = db.requests.filter((r) => r.status !== DONE_STATUS).length;
+    const unassigned = db.requests.filter((r) => r.masterId == null && r.status !== DONE_STATUS).length;
+    const low = db.parts.filter((p) => p.qty < LOW_STOCK).length;
+    $('#stat-total').textContent = total;
+    $('#stat-active').textContent = active;
+    $('#stat-unassigned').textContent = unassigned;
+    $('#stat-unassigned').classList.toggle('warn', unassigned > 0);
+    $('#stat-lowstock').textContent = low;
+    $('#stat-lowstock').classList.toggle('warn', low > 0);
+
+    // Лёгкая диаграмма на CSS вместо Chart.js: без внешних зависимостей и пересоздания canvas.
+    const counts = STATUSES.map((s) => db.requests.filter((r) => r.status === s).length);
+    const max = Math.max(1, ...counts);
+    $('#status-chart').replaceChildren(...STATUSES.map((s, i) => h('li', { class: 'bar-row' },
+      h('span', null, s),
+      h('span', { class: 'bar-track', 'aria-hidden': 'true' },
+        h('span', { class: 'bar-fill f' + i, style: `display:block;width:${(counts[i] / max) * 100}%` })),
+      h('span', { class: 'bar-count' }, counts[i], h('span', { class: 'sr-only' }, ' заявок')))));
+  }
+
+  function renderMasterFilter() {
+    const sel = $('#admin-filter-master');
+    const prev = sel.value;
+    sel.replaceChildren(
+      h('option', { value: '' }, 'Все'),
+      h('option', { value: 'none' }, 'Не назначен'),
+      ...masters().map((m) => h('option', { value: String(m.id) }, m.username)));
+    sel.value = [...sel.options].some((o) => o.value === prev) ? prev : '';
+  }
+
+  function renderAdminRequests() {
+    const q = $('#admin-filter-q').value.trim().toLowerCase();
+    const status = $('#admin-filter-status').value;
+    const mf = $('#admin-filter-master').value;
+    const list = db.requests.filter((r) =>
+      (!status || r.status === status) &&
+      (!mf || (mf === 'none' ? r.masterId == null : String(r.masterId) === mf)) &&
+      matchesQuery(r, q)).sort(byNewest);
+    $('#admin-requests-count').textContent = db.requests.length ? countLabel(list.length, db.requests.length) : '';
+    const ms = masters();
+    $('#admin-requests-list').replaceChildren(...(list.length ? list.map((r) => {
+      const sel = h('select', {
+        class: 'input input-sm', 'aria-label': `Мастер для заявки №${r.id}`,
+        onchange: (e) => assignMaster(r.id, e.target.value)
+      },
+        h('option', { value: '' }, '— Не назначен —'),
+        ms.map((m) => h('option', { value: String(m.id) }, m.username)),
+        r.masterId != null && !ms.some((m) => m.id === r.masterId)
+          ? h('option', { value: String(r.masterId), disabled: true }, `Удалённый мастер #${r.masterId}`) : null);
+      sel.value = r.masterId == null ? '' : String(r.masterId);
+      return h('tr', null,
+        h('td', { 'data-label': '№', class: 'num' }, '№' + r.id),
+        h('td', { 'data-label': 'Создана', class: 'num' }, fmtDate(r.createdAt)),
+        h('td', { 'data-label': 'Клиент', class: 'wrap' }, userName(r.clientId, 'неизвестен')),
+        h('td', { 'data-label': 'Устройство', class: 'wrap' },
+          h('div', null, h('div', null, r.device), h('span', { class: 'cell-sub', title: r.desc }, r.desc))),
+        h('td', { 'data-label': 'Статус' }, statusBadge(r.status)),
+        h('td', { 'data-label': 'Мастер' }, sel));
+    }) : [h('tr', null, h('td', { colspan: 6, class: 'empty' }, db.requests.length ? 'Нет заявок, подходящих под фильтр' : 'Заявок пока нет'))]));
+  }
+
+  function assignMaster(reqId, value) {
+    const user = requireRole('admin');
+    if (!user) return;
+    const r = db.requests.find((x) => x.id === reqId);
+    if (!r) { toast('Заявка не найдена', 'error'); renderAdmin(); return; }
+    const masterId = value === '' ? null : Number(value);
+    const master = masterId == null ? null : userById(masterId);
+    if (masterId != null && (!master || master.role !== 'master')) { toast('Мастер не найден', 'error'); renderAdmin(); return; }
+    if (r.masterId === masterId) return;
+    const ok = commit(() => {
+      r.masterId = masterId;
+      addHistory(r, user.id, master ? 'Назначен мастер: ' + master.username : 'Мастер снят');
+    });
+    if (ok) toast(master ? `Заявка №${reqId}: назначен мастер ${master.username}` : `С заявки №${reqId} снят мастер`, master ? 'success' : 'info');
+    renderAdmin();
+  }
+
+  ['#admin-filter-q', '#admin-filter-status', '#admin-filter-master'].forEach((s) =>
+    $(s).addEventListener(s === '#admin-filter-q' ? 'input' : 'change', renderAdminRequests));
+
+  // --- Склад ---
+  function parsePart(name, qtyStr, priceStr) {
+    name = String(name).trim();
+    const qty = Number(qtyStr), price = Number(priceStr);
+    if (!name) return { error: 'Укажите название запчасти' };
+    if (name.length > LIMITS.partName) return { error: `Название не длиннее ${LIMITS.partName} символов` };
+    if (qtyStr === '' || !Number.isInteger(qty) || qty < 0 || qty > LIMITS.qtyMax) return { error: 'Количество — целое число от 0' };
+    if (priceStr === '' || !Number.isFinite(price) || price < 0 || price > LIMITS.priceMax) return { error: 'Цена — число от 0' };
+    return { name, qty, price: Math.round(price * 100) / 100 };
+  }
+  const nameTaken = (name, exceptId) => db.parts.some((p) => p.id !== exceptId && p.name.toLowerCase() === name.toLowerCase());
+
+  function renderParts() {
+    const low = db.parts.filter((p) => p.qty < LOW_STOCK).length;
+    $('#parts-count').textContent = db.parts.length ? `(${db.parts.length} поз.${low ? `, мало: ${low}` : ''})` : '';
+    const rows = db.parts.slice().sort((a, b) => a.name.localeCompare(b.name, 'ru')).map((p) =>
+      p.id === ui.editingPartId ? partEditRow(p) : partRow(p));
+    $('#admin-parts-list').replaceChildren(...(rows.length ? rows
+      : [h('tr', null, h('td', { colspan: 4, class: 'empty' }, 'Склад пуст'))]));
+  }
+
+  function partRow(p) {
+    return h('tr', null,
+      h('td', { 'data-label': 'Название', class: 'wrap' }, p.name),
+      h('td', { 'data-label': 'Остаток', class: 'num' },
+        h('span', { class: p.qty < LOW_STOCK ? 'low' : '' }, p.qty + ' шт.'),
+        p.qty < LOW_STOCK ? h('span', { class: 'sr-only' }, ' (мало)') : null),
+      h('td', { 'data-label': 'Цена', class: 'num' }, fmtMoney(p.price)),
+      h('td', { class: 'actions' },
+        h('button', { type: 'button', class: 'btn btn-sm btn-ghost', 'aria-label': `Изменить «${p.name}»`, onclick: () => { ui.editingPartId = p.id; renderParts(); focusEdit(); } }, 'Изменить'),
+        h('button', { type: 'button', class: 'btn btn-sm btn-danger', 'aria-label': `Удалить «${p.name}»`, onclick: () => deletePart(p.id) }, 'Удалить')));
+  }
+
+  function partEditRow(p) {
+    const name = h('input', { class: 'input input-sm', type: 'text', value: p.name, maxlength: LIMITS.partName, 'aria-label': 'Название', 'data-edit-first': true });
+    const qty = h('input', { class: 'input input-sm', type: 'number', min: 0, step: 1, value: String(p.qty), 'aria-label': 'Остаток, шт.' });
+    const price = h('input', { class: 'input input-sm', type: 'number', min: 0, step: 0.01, value: String(p.price), 'aria-label': 'Цена, ₽' });
+    const save = () => savePart(p.id, name.value, qty.value, price.value);
+    const cancel = () => { ui.editingPartId = null; renderParts(); };
+    const onKey = (e) => { if (e.key === 'Enter') { e.preventDefault(); save(); } else if (e.key === 'Escape') cancel(); };
+    [name, qty, price].forEach((i) => i.addEventListener('keydown', onKey));
+    return h('tr', null,
+      h('td', { 'data-label': 'Название' }, name),
+      h('td', { 'data-label': 'Остаток' }, qty),
+      h('td', { 'data-label': 'Цена' }, price),
+      h('td', { class: 'actions' },
+        h('button', { type: 'button', class: 'btn btn-sm btn-primary', onclick: save }, 'Сохранить'),
+        h('button', { type: 'button', class: 'btn btn-sm btn-ghost', onclick: cancel }, 'Отмена')));
+  }
+  const focusEdit = () => { const el = document.querySelector('[data-edit-first]'); if (el) { el.focus(); el.select(); } };
+
+  function savePart(id, name, qtyStr, priceStr) {
+    if (!requireRole('admin')) return;
+    const p = db.parts.find((x) => x.id === id);
+    if (!p) { ui.editingPartId = null; renderParts(); return; }
+    const v = parsePart(name, qtyStr, priceStr);
+    if (v.error) { toast(v.error, 'error'); return; }
+    if (nameTaken(v.name, id)) { toast('Запчасть с таким названием уже есть', 'error'); return; }
+    if (commit(() => Object.assign(p, v))) {
+      ui.editingPartId = null;
+      toast('Запчасть обновлена');
+    }
+    renderAdminStats();
+    renderParts();
+  }
+
+  function deletePart(id) {
+    if (!requireRole('admin')) return;
+    const p = db.parts.find((x) => x.id === id);
+    if (!p || !window.confirm(`Удалить запчасть «${p.name}» со склада?`)) return;
+    if (commit(() => { db.parts = db.parts.filter((x) => x.id !== id); })) toast('Запчасть удалена', 'info');
+    renderAdminStats();
+    renderParts();
+  }
+
+  $('#add-part-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!requireRole('admin')) return;
+    const v = parsePart($('#part-name').value, $('#part-qty').value, $('#part-price').value);
+    if (v.error) { toast(v.error, 'error'); return; }
+    if (nameTaken(v.name)) { toast('Такая запчасть уже есть — измените её количество в таблице', 'error'); return; }
+    if (!commit(() => db.parts.push({ id: nextId(), ...v }))) return;
+    e.currentTarget.reset();
+    $('#part-name').focus();
+    renderAdminStats();
+    renderParts();
+    toast('Запчасть добавлена на склад');
+  });
+
+  // ================= 14. Синхронизация между вкладками и глобальные ошибки =================
+  window.addEventListener('storage', async (e) => {
+    if (e.key === DB_KEY && e.newValue) {
+      try { db = await migrate(JSON.parse(e.newValue)); userCache = null; render(); }
+      catch (err) { console.warn('Не удалось применить изменения из другой вкладки:', err); }
+    } else if (e.key === null) {           // localStorage.clear() в другой вкладке
+      await loadDB(); render();
+    }
+  });
+  window.addEventListener('unhandledrejection', (e) => { console.warn(e.reason); toast('Произошла непредвиденная ошибка', 'error'); });
+
+  // ================= 15. Запуск =================
+  (async () => {
+    try {
+      const notices = await loadDB();
+      restoreSession();
+      $('#app-loading').hidden = true;
+      render();
+      notices.forEach((n) => toast(n, 'error'));
+    } catch (e) {
+      console.warn(e);
+      $('#app-loading').textContent = 'Не удалось запустить приложение. Обновите страницу.';
+    }
+  })();
+})();
+</script>
+</body>
+</html>

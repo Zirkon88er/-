@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>ПРОКАТ - Сервис аренды оборудования</title>
+<style>
+:root {
+  --bg: #f8fafc; --surface: #fff; --border: #e2e8f0; --border-strong: #cbd5e1;
+  --text: #1e293b; --text-strong: #0f172a; --muted: #475569; --subtle: #64748b;
+  --primary: #4f46e5; --primary-hover: #4338ca; --primary-soft: #e0e7ff; --primary-ink: #3730a3;
+  --success: #047857; --success-hover: #065f46; --success-soft: #d1fae5; --success-ink: #065f46;
+  --danger: #b91c1c; --danger-soft: #fee2e2; --warn-soft: #fef3c7; --warn-ink: #92400e;
+  --dark: #0f172a; --dark-hover: #1e293b;
+  --radius: 12px; --radius-sm: 8px;
+  --shadow-sm: 0 1px 2px rgba(15,23,42,.06); --shadow: 0 4px 12px rgba(15,23,42,.08);
+  --shadow-xl: 0 20px 40px rgba(15,23,42,.25);
+  --focus: 0 0 0 3px rgba(79,70,229,.35);
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; min-height: 100vh; display: flex; flex-direction: column;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px; line-height: 1.5; color: var(--text); background: var(--bg);
+}
+h1, h2, h3, h4, p { margin: 0; }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+img { display: block; max-width: 100%; }
+.icon { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+.skip-link { position: absolute; left: 8px; top: -60px; z-index: 100; background: var(--dark); color: #fff; padding: 8px 12px; border-radius: var(--radius-sm); }
+.skip-link:focus { top: 8px; }
+:focus-visible { outline: none; box-shadow: var(--focus); }
+
+/* Layout */
+.container { width: 100%; max-width: 1280px; margin: 0 auto; padding: 0 16px; }
+@media (min-width: 640px) { .container { padding: 0 24px; } }
+@media (min-width: 1024px) { .container { padding: 0 32px; } }
+#main { flex: 1; padding-top: 32px; padding-bottom: 48px; outline: none; }
+#main:focus-visible { box-shadow: none; }
+.view[hidden] { display: none; }
+.page-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 28px; }
+.page-title { font-size: 1.75rem; font-weight: 700; color: var(--text-strong); line-height: 1.2; }
+@media (min-width: 768px) { .page-title { font-size: 1.875rem; } }
+
+/* Navbar */
+.navbar { position: sticky; top: 0; z-index: 40; background: rgba(255,255,255,.95); border-bottom: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+.navbar .container { display: flex; justify-content: space-between; align-items: center; min-height: 64px; gap: 8px; }
+.brand { display: inline-flex; align-items: center; gap: 8px; border: 0; background: none; padding: 4px; border-radius: var(--radius-sm); font-weight: 700; font-size: 1.2rem; letter-spacing: -.02em; color: var(--text-strong); }
+.brand .icon { color: var(--primary); font-size: 1.6rem; }
+.brand b { color: var(--primary); font-weight: 700; }
+.nav-links { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+.nav-link { border: 0; background: none; color: var(--muted); padding: 8px 12px; border-radius: var(--radius-sm); font-size: .875rem; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; transition: color .15s, background-color .15s; }
+.nav-link:hover { color: var(--primary); background: #f1f5f9; }
+.nav-link[aria-current="page"] { color: var(--primary); background: var(--primary-soft); }
+.nav-link.logout:hover { color: var(--danger); background: var(--danger-soft); }
+.nav-user { font-size: .8125rem; color: var(--subtle); padding: 0 6px; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 480px) { .nav-user { display: none; } .brand span { font-size: 1.05rem; } .nav-link { padding: 8px; } }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid transparent; border-radius: var(--radius-sm); padding: 9px 16px; font-size: .9375rem; font-weight: 500; line-height: 1.25; transition: background-color .15s, color .15s, border-color .15s; text-decoration: none; }
+.btn-block { width: 100%; padding-top: 11px; padding-bottom: 11px; }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
+.btn-success { background: var(--success); color: #fff; }
+.btn-success:hover:not(:disabled) { background: var(--success-hover); }
+.btn-dark { background: var(--dark); color: #fff; }
+.btn-dark:hover:not(:disabled) { background: var(--dark-hover); }
+.btn:disabled { background: #e2e8f0; color: #64748b; }
+.btn-link { border: 0; background: none; color: var(--primary); font-size: .875rem; font-weight: 500; padding: 4px; border-radius: 4px; }
+.btn-link:hover { color: var(--primary-ink); text-decoration: underline; }
+.btn-sm { border: 0; padding: 5px 12px; border-radius: 6px; font-size: .75rem; font-weight: 600; transition: background-color .15s; }
+.btn-sm.indigo { background: var(--primary-soft); color: var(--primary-ink); }
+.btn-sm.indigo:hover { background: #c7d2fe; }
+.btn-sm.green { background: var(--success-soft); color: var(--success-ink); }
+.btn-sm.green:hover { background: #a7f3d0; }
+.btn-sm.red { background: var(--danger-soft); color: var(--danger); }
+.btn-sm.red:hover { background: #fecaca; }
+.icon-btn { border: 0; background: none; padding: 8px; border-radius: 6px; display: inline-flex; color: var(--subtle); font-size: 1rem; transition: color .15s, background-color .15s; }
+.icon-btn:hover { background: #f1f5f9; color: var(--text-strong); }
+.icon-btn.edit { color: var(--primary); }
+.icon-btn.del { color: var(--danger); }
+.icon-btn.del:hover { background: var(--danger-soft); }
+.actions { display: inline-flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+
+/* Forms */
+.field { margin-bottom: 16px; }
+.field label { display: block; font-size: .875rem; font-weight: 500; color: #334155; margin-bottom: 4px; }
+.input { width: 100%; padding: 9px 12px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: #fff; transition: border-color .15s, box-shadow .15s; min-height: 42px; }
+.input:focus { outline: none; border-color: var(--primary); box-shadow: var(--focus); }
+.input:invalid:not(:placeholder-shown):not(:focus) { border-color: #f87171; }
+.hint { font-size: .75rem; color: var(--subtle); margin-top: 4px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 420px) { .grid-2 { grid-template-columns: 1fr; gap: 0; } }
+
+/* Catalog */
+.filters { display: flex; flex-wrap: wrap; gap: 12px; width: 100%; }
+@media (min-width: 768px) { .filters { width: auto; } }
+.search { position: relative; flex: 1 1 220px; }
+.search .icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none; }
+.search .input { padding-left: 38px; }
+@media (min-width: 640px) { .search { flex: 0 1 260px; } }
+.filters select { flex: 1 1 180px; }
+@media (min-width: 640px) { .filters select { flex: 0 0 auto; width: auto; } }
+.catalog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 24px; }
+.result-count { font-size: .875rem; color: var(--subtle); margin: -12px 0 16px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); overflow: hidden; display: flex; flex-direction: column; transition: box-shadow .2s; }
+.card:hover { box-shadow: var(--shadow); }
+.card-media { position: relative; aspect-ratio: 4 / 3; background: #f1f5f9; overflow: hidden; }
+.card-media img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
+.card:hover .card-media img { transform: scale(1.04); }
+.chip { position: absolute; top: 12px; left: 12px; background: rgba(255,255,255,.92); font-size: .75rem; font-weight: 600; padding: 3px 8px; border-radius: 6px; color: #334155; }
+.out-of-stock { position: absolute; inset: 0; background: rgba(255,255,255,.65); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--text-strong); }
+.card-body { padding: 20px; display: flex; flex-direction: column; flex: 1; }
+.card-title { font-size: 1.0625rem; font-weight: 600; color: var(--text-strong); line-height: 1.3; overflow-wrap: anywhere; }
+.card-meta { margin-top: auto; padding-top: 14px; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.price { font-size: 1.25rem; font-weight: 700; color: var(--primary); }
+.per { font-size: .875rem; color: var(--subtle); }
+.stock-note { font-size: .75rem; color: var(--subtle); }
+.card-body .btn { margin-top: 14px; width: 100%; }
+.empty { grid-column: 1 / -1; text-align: center; padding: 40px 16px; color: var(--subtle); }
+
+/* Panels / tables */
+.panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); overflow: hidden; }
+.panel-head { padding: 16px 24px; border-bottom: 1px solid var(--border); background: var(--bg); display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.panel-head h2 { font-size: 1rem; font-weight: 600; color: var(--text); }
+.panel-body { padding: 8px 24px 16px; }
+@media (max-width: 640px) { .panel-body { padding: 8px 12px 12px; } .panel-head { padding: 14px 16px; } }
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table { width: 100%; border-collapse: collapse; text-align: left; font-size: .875rem; }
+th { padding: 12px 10px 12px 0; font-weight: 500; color: var(--subtle); border-bottom: 1px solid var(--border); white-space: nowrap; }
+td { padding: 12px 10px 12px 0; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+tbody tr:hover { background: var(--bg); }
+tbody tr:last-child td { border-bottom: 0; }
+.ta-right { text-align: right; padding-right: 0; }
+.strong { font-weight: 500; color: var(--text-strong); }
+.muted { color: var(--subtle); }
+.xs { font-size: .75rem; }
+.nowrap { white-space: nowrap; }
+.td-empty { text-align: center; padding: 24px 0; color: var(--subtle); }
+.stock-ok { color: var(--success); font-weight: 700; }
+.stock-none { color: var(--danger); font-weight: 700; }
+.overdue { color: var(--danger); font-weight: 600; }
+.badge { display: inline-block; font-size: .75rem; font-weight: 500; padding: 3px 8px; border-radius: 6px; white-space: nowrap; }
+.badge.pending { background: var(--warn-soft); color: var(--warn-ink); }
+.badge.active { background: var(--primary-soft); color: var(--primary-ink); }
+.badge.done { background: #f1f5f9; color: var(--muted); }
+.badge.cancel { background: var(--danger-soft); color: var(--danger); }
+
+/* Auth */
+.auth-card { max-width: 440px; margin: 24px auto 0; background: var(--surface); padding: 32px; border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+@media (max-width: 480px) { .auth-card { padding: 24px 18px; } }
+.auth-card header { text-align: center; margin-bottom: 28px; }
+.auth-card h2 { font-size: 1.5rem; font-weight: 700; color: var(--text-strong); }
+.auth-card header p { font-size: .875rem; color: var(--subtle); margin-top: 8px; }
+.auth-foot { margin-top: 16px; text-align: center; }
+.demo-hint { margin-top: 20px; padding: 12px; background: var(--bg); border: 1px dashed var(--border-strong); border-radius: var(--radius-sm); font-size: .8125rem; color: var(--muted); }
+.demo-hint code { background: #e2e8f0; padding: 1px 5px; border-radius: 4px; font-size: .8125rem; }
+
+/* Modal */
+.modal { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(15,23,42,.6); opacity: 0; transition: opacity .25s; overflow-y: auto; }
+.modal[hidden] { display: none; }
+.modal.open { opacity: 1; }
+.modal-dialog { background: var(--surface); border-radius: 16px; box-shadow: var(--shadow-xl); width: 100%; max-width: 448px; transform: scale(.95); transition: transform .25s; margin: auto; }
+.modal.open .modal-dialog { transform: scale(1); }
+.modal-dialog.lg { max-width: 512px; }
+.modal-head { padding: 14px 16px 14px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.modal-head h3 { font-size: 1.125rem; font-weight: 700; color: var(--text-strong); }
+.modal-head .icon-btn { font-size: 1.25rem; }
+.modal-body { padding: 24px; }
+.book-item { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+.book-item img { width: 64px; height: 64px; object-fit: cover; border-radius: var(--radius-sm); background: #f1f5f9; flex-shrink: 0; }
+.book-item h4 { font-weight: 600; color: var(--text-strong); overflow-wrap: anywhere; }
+.book-item p { font-size: .875rem; color: var(--primary); font-weight: 500; }
+.total-box { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px; margin: 4px 0 24px; }
+.total-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.total-row output { font-size: 1.25rem; font-weight: 700; color: var(--text-strong); }
+.total-days { font-size: .8125rem; color: var(--subtle); margin-top: 2px; }
+.return-info { font-size: .875rem; color: var(--muted); margin-bottom: 16px; padding: 10px 12px; background: var(--bg); border-radius: var(--radius-sm); }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
+
+/* Toasts */
+.toasts { position: fixed; bottom: 16px; right: 16px; left: 16px; z-index: 60; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; pointer-events: none; }
+.toast { pointer-events: auto; max-width: 420px; color: #fff; padding: 12px 18px; border-radius: var(--radius-sm); box-shadow: var(--shadow); display: flex; align-items: center; gap: 10px; font-size: .9375rem; transform: translateY(16px); opacity: 0; transition: transform .25s, opacity .25s; }
+.toast.show { transform: none; opacity: 1; }
+.toast.success { background: var(--success); }
+.toast.error { background: var(--danger); }
+.toast.info { background: #1d4ed8; }
+.toast span { overflow-wrap: anywhere; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <symbol id="i-logo" viewBox="0 0 24 24"><path d="M3 20h18"/><path d="M5 20l5-9 3 4 2-3 4 8"/><circle cx="15" cy="5" r="2"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
+</svg>
+
+<a class="skip-link" href="#main">Перейти к содержимому</a>
+
+<nav class="navbar" aria-label="Основная навигация">
+  <div class="container">
+    <button type="button" class="brand" data-action="nav" data-view="catalog" aria-label="ПРОКАТ.РУ — на главную">
+      <svg class="icon" aria-hidden="true"><use href="#i-logo"/></svg>
+      <span>ПРОКАТ<b>.РУ</b></span>
+    </button>
+    <div class="nav-links" id="nav-links"></div>
+  </div>
+</nav>
+
+<main id="main" class="container" tabindex="-1">
+
+  <!-- CATALOG -->
+  <section id="view-catalog" class="view" aria-labelledby="catalog-title">
+    <div class="page-head">
+      <h1 class="page-title" id="catalog-title">Каталог оборудования</h1>
+      <div class="filters" role="search">
+        <div class="search">
+          <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+          <label for="search-input" class="sr-only">Поиск по названию</label>
+          <input type="search" id="search-input" class="input" placeholder="Поиск..." autocomplete="off">
+        </div>
+        <label for="category-filter" class="sr-only">Категория</label>
+        <select id="category-filter" class="input"></select>
+      </div>
+    </div>
+    <p class="result-count" id="catalog-count" aria-live="polite"></p>
+    <div id="catalog-grid" class="catalog-grid"></div>
+  </section>
+
+  <!-- AUTH -->
+  <section id="view-auth" class="view" hidden aria-labelledby="auth-title">
+    <div class="auth-card">
+      <header>
+        <h2 id="auth-title">Вход в систему</h2>
+        <p id="auth-subtitle">Войдите, чтобы управлять бронированиями</p>
+      </header>
+      <form id="auth-form" novalidate>
+        <div class="field">
+          <label for="auth-username" id="auth-username-label">Логин</label>
+          <input type="text" id="auth-username" class="input" required maxlength="32" autocomplete="username" autocapitalize="off" spellcheck="false">
+          <p class="hint" id="auth-username-hint" hidden>3–32 символа: буквы, цифры, «_», «-», «.»</p>
+        </div>
+        <div class="field">
+          <label for="auth-password">Пароль</label>
+          <input type="password" id="auth-password" class="input" required maxlength="128" autocomplete="current-password">
+          <p class="hint" id="auth-password-hint" hidden>Не менее 4 символов</p>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" id="auth-submit">Продолжить</button>
+        <div class="auth-foot">
+          <button type="button" class="btn-link" data-action="toggle-auth" id="auth-toggle-btn">Нет аккаунта? Зарегистрироваться</button>
+        </div>
+      </form>
+      <p class="demo-hint">Демо-доступ: <code>admin</code>, <code>manager</code>, <code>client</code> — пароль <code>123</code></p>
+    </div>
+  </section>
+
+  <!-- CLIENT -->
+  <section id="view-client" class="view" hidden aria-labelledby="client-title">
+    <div class="page-head"><h1 class="page-title" id="client-title">Личный кабинет</h1></div>
+    <div class="panel">
+      <div class="panel-head"><h2>Мои бронирования</h2></div>
+      <div class="panel-body table-wrap">
+        <table>
+          <thead><tr>
+            <th scope="col">Оборудование</th><th scope="col">Период</th><th scope="col">Сумма</th><th scope="col">Статус</th><th scope="col" class="ta-right"><span class="sr-only">Действия</span></th>
+          </tr></thead>
+          <tbody id="client-bookings-list"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- MANAGER -->
+  <section id="view-manager" class="view" hidden aria-labelledby="manager-title">
+    <div class="page-head"><h1 class="page-title" id="manager-title">Панель Менеджера</h1></div>
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Управление бронированиями</h2>
+        <label for="manager-filter" class="sr-only">Фильтр по статусу</label>
+        <select id="manager-filter" class="input" style="width:auto;min-height:36px;padding:6px 10px;font-size:.875rem">
+          <option value="all">Все статусы</option>
+          <option value="Ожидает">Ожидает</option>
+          <option value="Выдано">В аренде</option>
+          <option value="Возвращено">Возвращено</option>
+          <option value="Отменено">Отменено</option>
+        </select>
+      </div>
+      <div class="panel-body table-wrap">
+        <table>
+          <thead><tr>
+            <th scope="col">ID / Клиент</th><th scope="col">Оборудование</th><th scope="col">Даты</th><th scope="col">Статус</th><th scope="col" class="ta-right">Действия</th>
+          </tr></thead>
+          <tbody id="manager-bookings-list"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ADMIN -->
+  <section id="view-admin" class="view" hidden aria-labelledby="admin-title">
+    <div class="page-head">
+      <h1 class="page-title" id="admin-title">Склад и Каталог (Админ)</h1>
+      <button type="button" class="btn btn-success" data-action="add-equipment">
+        <svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg> Добавить позицию
+      </button>
+    </div>
+    <div class="panel">
+      <div class="panel-body table-wrap">
+        <table>
+          <thead><tr>
+            <th scope="col">ID</th><th scope="col">Наименование</th><th scope="col">Категория</th><th scope="col">Цена/сутки</th><th scope="col">Остаток</th><th scope="col" class="ta-right">Действия</th>
+          </tr></thead>
+          <tbody id="admin-equipment-list"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Booking modal -->
+<div id="modal-booking" class="modal" hidden>
+  <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="book-modal-heading">
+    <div class="modal-head">
+      <h3 id="book-modal-heading">Оформление брони</h3>
+      <button type="button" class="icon-btn" data-action="close-modal" aria-label="Закрыть"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="book-item">
+        <img id="book-modal-img" src="data:," alt="">
+        <div>
+          <h4 id="book-modal-title"></h4>
+          <p id="book-modal-price"></p>
+        </div>
+      </div>
+      <form id="booking-form" novalidate>
+        <div class="grid-2">
+          <div class="field">
+            <label for="book-start-date">Дата начала</label>
+            <input type="date" id="book-start-date" class="input" required>
+          </div>
+          <div class="field">
+            <label for="book-end-date">Дата возврата</label>
+            <input type="date" id="book-end-date" class="input" required>
+          </div>
+        </div>
+        <div class="total-box">
+          <div class="total-row">
+            <span class="muted">Итого к оплате:</span>
+            <output id="book-total-cost" for="book-start-date book-end-date" aria-live="polite">0 ₽</output>
+          </div>
+          <div class="total-days" id="book-total-days"></div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Подтвердить бронирование</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Equipment modal -->
+<div id="modal-equipment" class="modal" hidden>
+  <div class="modal-dialog lg" role="dialog" aria-modal="true" aria-labelledby="eq-modal-title">
+    <div class="modal-head">
+      <h3 id="eq-modal-title">Добавить оборудование</h3>
+      <button type="button" class="icon-btn" data-action="close-modal" aria-label="Закрыть"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <form id="equipment-form" novalidate>
+        <div class="field">
+          <label for="eq-name">Наименование</label>
+          <input type="text" id="eq-name" class="input" required maxlength="100">
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="eq-category">Категория</label>
+            <select id="eq-category" class="input"></select>
+          </div>
+          <div class="field">
+            <label for="eq-price">Цена (сутки), ₽</label>
+            <input type="number" id="eq-price" class="input" required min="0" step="1" inputmode="numeric">
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="eq-stock">Остаток на складе</label>
+            <input type="number" id="eq-stock" class="input" required min="0" step="1" inputmode="numeric">
+          </div>
+          <div class="field">
+            <label for="eq-image">URL изображения</label>
+            <input type="url" id="eq-image" class="input" placeholder="https://..." maxlength="2000">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-success btn-block" style="margin-top:8px">Сохранить</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Return modal -->
+<div id="modal-return" class="modal" hidden>
+  <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="return-modal-title">
+    <div class="modal-head">
+      <h3 id="return-modal-title">Оформление возврата</h3>
+      <button type="button" class="icon-btn" data-action="close-modal" aria-label="Закрыть"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <p class="return-info" id="return-info"></p>
+      <form id="return-form" novalidate>
+        <div class="field">
+          <label for="return-condition">Состояние оборудования</label>
+          <select id="return-condition" class="input">
+            <option value="Хорошее (Без повреждений)">Хорошее (Без повреждений)</option>
+            <option value="Незначительные дефекты">Незначительные дефекты</option>
+            <option value="Требует ремонта (Штраф)">Требует ремонта (Штраф)</option>
+            <option value="Утеряно/Уничтожено">Утеряно/Уничтожено</option>
+          </select>
+          <p class="hint" id="return-condition-hint">При статусе «Утеряно/Уничтожено» единица не возвращается на склад.</p>
+        </div>
+        <div class="field" style="margin-bottom:24px">
+          <label for="return-fine">Штраф (если применимо), ₽</label>
+          <input type="number" id="return-fine" class="input" value="0" min="0" step="1" inputmode="numeric">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Подтвердить возврат</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container" class="toasts" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+(() => {
+  // ---------- Константы ----------
+  const CATEGORIES = ['Строительное', 'Туристическое', 'Спортивное'];
+  const STATUS = { PENDING: 'Ожидает', ISSUED: 'Выдано', RETURNED: 'Возвращено', CANCELLED: 'Отменено' };
+  const ROLES = { admin: 'admin', manager: 'manager', client: 'client' };
+  const HOME_VIEW = { admin: 'admin', manager: 'manager', client: 'client' };
+  const LOST = 'Утеряно/Уничтожено';
+  const KEYS = { users: 'users', equipment: 'equipment', bookings: 'bookings', session: 'currentUser' };
+  const DAY_MS = 86400000;
+
+  const $ = (id) => document.getElementById(id);
+
+  // ---------- Безопасное хранилище ----------
+  const Store = (() => {
+    const mem = new Map();
+    let available = false;
+    try { const k = '__probe__'; localStorage.setItem(k, k); localStorage.removeItem(k); available = true; } catch (_) { /* приватный режим и т.п. */ }
+    return {
+      available,
+      read(key, fallback) {
+        let raw = null;
+        try { raw = available ? localStorage.getItem(key) : (mem.has(key) ? mem.get(key) : null); } catch (_) { raw = null; }
+        if (raw == null) return fallback;
+        try { return JSON.parse(raw); } catch (_) { console.warn('Повреждённые данные в хранилище:', key); return fallback; }
+      },
+      write(key, value) {
+        const raw = JSON.stringify(value);
+        if (available) {
+          try { localStorage.setItem(key, raw); return true; } catch (e) { console.warn('Не удалось сохранить', key, e); return false; }
+        }
+        mem.set(key, raw); return true;
+      },
+      remove(key) { try { available ? localStorage.removeItem(key) : mem.delete(key); } catch (_) { /* ignore */ } }
+    };
+  })();
+
+  // ---------- Утилиты ----------
+  const ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+  const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ESC[c]);
+  const money = (n) => `${(Number(n) || 0).toLocaleString('ru-RU', { maximumFractionDigits: 2 })} ₽`;
+  const toInt = (v) => (Number.isFinite(Number(v)) ? Math.trunc(Number(v)) : NaN);
+
+  const pad = (n) => String(n).padStart(2, '0');
+  const isoLocal = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const todayISO = () => isoLocal(new Date());
+  const addDaysISO = (iso, n) => { const d = parseISO(iso); d.setDate(d.getDate() + n); return isoLocal(d); };
+  // 'YYYY-MM-DD' -> локальная дата (new Date('YYYY-MM-DD') парсит как UTC и даёт сдвиг дня)
+  function parseISO(s) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s || ''));
+    if (!m) return null;
+    const d = new Date(+m[1], +m[2] - 1, +m[3], 12);
+    return d.getMonth() === +m[2] - 1 ? d : null;
+  }
+  // Включительно: один и тот же день = 1 сутки (как в исходной логике)
+  function rentalDays(startIso, endIso) {
+    const s = parseISO(startIso), e = parseISO(endIso);
+    if (!s || !e || e < s) return 0;
+    return Math.round((e - s) / DAY_MS) + 1;
+  }
+  const formatDate = (iso) => { const d = parseISO(iso); return d ? d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—'; };
+
+  const SAFE_IMG = /^(https?:\/\/|data:image\/(png|jpe?g|gif|webp|svg\+xml)[;,])/i;
+  const isSafeImageUrl = (u) => !u || SAFE_IMG.test(u);
+
+  // Локальная заглушка изображения (без сетевых запросов)
+  const CAT_COLORS = { 'Строительное': ['#fef3c7', '#92400e'], 'Туристическое': ['#dcfce7', '#166534'], 'Спортивное': ['#e0e7ff', '#3730a3'] };
+  const placeholderCache = new Map();
+  function placeholder(name, category) {
+    const key = `${category}|${name}`;
+    if (placeholderCache.has(key)) return placeholderCache.get(key);
+    const [bg, fg] = CAT_COLORS[category] || ['#e2e8f0', '#475569'];
+    const label = String(name || 'Оборудование').split(/\s+/)[0].slice(0, 16);
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect width="400" height="300" fill="${bg}"/><text x="200" y="160" font-family="system-ui,Arial,sans-serif" font-size="30" font-weight="600" fill="${fg}" text-anchor="middle">${esc(label)}</text></svg>`;
+    const url = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+    placeholderCache.set(key, url);
+    return url;
+  }
+  const imageFor = (item) => (item.image && isSafeImageUrl(item.image) ? item.image : placeholder(item.name, item.category));
+
+  function nextId(list) {
+    const max = list.reduce((m, x) => Math.max(m, Number(x.id) || 0), 0);
+    return Math.max(Date.now(), max + 1);
+  }
+
+  // ---------- Пароли ----------
+  // Внимание: это демо без сервера; хэш лишь не даёт хранить пароль открытым текстом.
+  async function hashPassword(pwd, salt) {
+    salt = salt || Array.from(crypto.getRandomValues(new Uint8Array(12)), (b) => b.toString(16).padStart(2, '0')).join('');
+    const data = `${salt}:${pwd}`;
+    if (window.crypto && crypto.subtle) {
+      try {
+        const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(data));
+        return `sha256$${salt}$${Array.from(new Uint8Array(buf), (b) => b.toString(16).padStart(2, '0')).join('')}`;
+      } catch (_) { /* fallthrough */ }
+    }
+    let h = 0x811c9dc5; // FNV-1a — запасной вариант вне secure context
+    for (let i = 0; i < data.length; i++) { h ^= data.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+    return `fnv$${salt}$${h.toString(16)}`;
+  }
+  async function verifyPassword(pwd, user) {
+    if (typeof user.passwordHash === 'string') {
+      const [, salt] = user.passwordHash.split('$');
+      return (await hashPassword(pwd, salt)) === user.passwordHash;
+    }
+    return typeof user.password === 'string' && user.password === pwd; // старый формат
+  }
+
+  // ---------- Данные ----------
+  const SEED_EQUIPMENT = [
+    { id: 1, name: 'Перфоратор Bosch GBH', category: 'Строительное', price: 1200, stock: 5, image: '' },
+    { id: 2, name: 'Палатка Trek Planet 4', category: 'Туристическое', price: 800, stock: 10, image: '' },
+    { id: 3, name: 'Велосипед горный Stern', category: 'Спортивное', price: 1500, stock: 3, image: '' },
+    { id: 4, name: 'Бетономешалка 160л', category: 'Строительное', price: 2000, stock: 2, image: '' },
+    { id: 5, name: 'Спальный мешок -15°C', category: 'Туристическое', price: 300, stock: 15, image: '' },
+    { id: 6, name: 'Сноуборд с креплениями', category: 'Спортивное', price: 1800, stock: 6, image: '' }
+  ];
+  const SEED_USERS = [
+    { id: 1, username: 'admin', password: '123', role: 'admin' },
+    { id: 2, username: 'manager', password: '123', role: 'manager' },
+    { id: 3, username: 'client', password: '123', role: 'client' }
+  ];
+  const arr = (v) => (Array.isArray(v) ? v.filter((x) => x && typeof x === 'object') : null);
+
+  const sanitizeEquipment = (list) => list
+    .filter((i) => Number.isFinite(Number(i.id)) && typeof i.name === 'string')
+    .map((i) => ({ ...i, id: Number(i.id), price: Math.max(0, Number(i.price) || 0), stock: Math.max(0, toInt(i.stock) || 0), category: String(i.category || ''), image: typeof i.image === 'string' ? i.image : '' }));
+
+  const state = {
+    users: [], equipment: [], bookings: [], user: null,
+    view: 'catalog', authMode: 'login', returnBookingId: null, bookingItemId: null, eqEditId: null
+  };
+
+  function load() {
+    let users = arr(Store.read(KEYS.users, null));
+    let equipment = arr(Store.read(KEYS.equipment, null));
+    let bookings = arr(Store.read(KEYS.bookings, null));
+    if (!users) { users = SEED_USERS.map((u) => ({ ...u })); Store.write(KEYS.users, users); }
+    if (!equipment) { equipment = SEED_EQUIPMENT.map((e) => ({ ...e })); Store.write(KEYS.equipment, equipment); }
+    if (!bookings) { bookings = []; Store.write(KEYS.bookings, bookings); }
+    state.users = users.filter((u) => typeof u.username === 'string' && u.id != null);
+    state.equipment = sanitizeEquipment(equipment);
+    state.bookings = bookings.filter((b) => b.id != null);
+    // Сессия хранит только id; роль всегда берётся из базы пользователей
+    const sess = Store.read(KEYS.session, null);
+    const u = sess && state.users.find((x) => x.id === sess.id);
+    state.user = u ? { id: u.id, username: u.username, role: u.role } : null;
+    if (sess && !u) Store.remove(KEYS.session);
+  }
+  const save = (key) => {
+    if (!Store.write(KEYS[key], state[key])) toast('Не удалось сохранить данные (хранилище переполнено или недоступно)', 'error');
+  };
+
+  async function migratePasswords() {
+    let changed = false;
+    for (const u of state.users) {
+      if (typeof u.password === 'string' && typeof u.passwordHash !== 'string') {
+        u.passwordHash = await hashPassword(u.password);
+        delete u.password; changed = true;
+      }
+    }
+    if (changed) save('users');
+  }
+
+  const itemById = (id) => state.equipment.find((i) => i.id === id);
+  const userById = (id) => state.users.find((u) => u.id === id);
+  const bookingById = (id) => state.bookings.find((b) => b.id === id);
+  const hasRole = (role) => !!state.user && state.user.role === role;
+
+  // ---------- Уведомления ----------
+  const TOAST_ICON = { success: 'i-check', error: 'i-alert', info: 'i-info' };
+  function toast(msg, type = 'success') {
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    if (type === 'error') el.setAttribute('role', 'alert');
+    el.innerHTML = `<svg class="icon" aria-hidden="true"><use href="#${TOAST_ICON[type] || 'i-info'}"/></svg><span></span>`;
+    el.querySelector('span').textContent = msg;
+    const box = $('toast-container');
+    while (box.children.length >= 4) box.firstElementChild.remove(); // не копим уведомления
+    box.appendChild(el);
+    requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('show')));
+    setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 300); }, type === 'error' ? 4500 : 3000);
+  }
+
+  // ---------- Навигация ----------
+  function resolveView(view) {
+    const u = state.user;
+    if (view === 'auth' && u) return HOME_VIEW[u.role] || 'catalog';
+    if (view === 'client' && !hasRole(ROLES.client)) return u ? 'catalog' : 'auth';
+    if (view === 'manager' && !hasRole(ROLES.manager)) return 'catalog';
+    if (view === 'admin' && !hasRole(ROLES.admin)) return 'catalog';
+    return ['catalog', 'auth', 'client', 'manager', 'admin'].includes(view) ? view : 'catalog';
+  }
+
+  function navigate(view, { focus = false } = {}) {
+    view = resolveView(view);
+    const changed = view !== state.view;
+    state.view = view;
+    document.querySelectorAll('.view').forEach((el) => { el.hidden = el.id !== `view-${view}`; });
+    renderView();
+    renderNav();
+    if (changed) window.scrollTo(0, 0);
+    if (focus && changed) $('main').focus({ preventScroll: true });
+    if (view === 'auth') setTimeout(() => $('auth-username').focus(), 0);
+  }
+
+  function renderView() {
+    switch (state.view) {
+      case 'catalog': return renderCatalog();
+      case 'client': return renderClient();
+      case 'manager': return renderManager();
+      case 'admin': return renderAdmin();
+    }
+  }
+
+  function navBtn(view, label) {
+    const cur = state.view === view ? ' aria-current="page"' : '';
+    return `<button type="button" class="nav-link" data-action="nav" data-view="${view}"${cur}>${label}</button>`;
+  }
+  function renderNav() {
+    let html = navBtn('catalog', 'Каталог');
+    const u = state.user;
+    if (!u) {
+      html += `<button type="button" class="btn btn-primary" style="margin-left:8px;padding:8px 16px;font-size:.875rem" data-action="nav" data-view="auth"${state.view === 'auth' ? ' aria-current="page"' : ''}>Войти</button>`;
+    } else {
+      if (u.role === ROLES.client) html += navBtn('client', 'Мои аренды');
+      else if (u.role === ROLES.manager) html += navBtn('manager', 'Управление');
+      else if (u.role === ROLES.admin) html += navBtn('admin', 'Админ-панель');
+      html += `<span class="nav-user" title="${esc(u.username)}">${esc(u.username)}</span>`;
+      html += `<button type="button" class="nav-link logout" data-action="logout"><svg class="icon" aria-hidden="true"><use href="#i-logout"/></svg> Выход</button>`;
+    }
+    $('nav-links').innerHTML = html;
+  }
+
+  // ---------- Авторизация ----------
+  function setAuthMode(mode) {
+    state.authMode = mode;
+    const login = mode === 'login';
+    $('auth-title').textContent = login ? 'Вход в систему' : 'Регистрация';
+    $('auth-subtitle').textContent = login ? 'Войдите, чтобы управлять бронированиями' : 'Создайте аккаунт клиента';
+    $('auth-username-label').textContent = login ? 'Логин' : 'Имя пользователя (Логин)';
+    $('auth-toggle-btn').textContent = login ? 'Нет аккаунта? Зарегистрироваться' : 'Уже есть аккаунт? Войти';
+    $('auth-submit').textContent = login ? 'Продолжить' : 'Зарегистрироваться';
+    $('auth-username-hint').hidden = login;
+    $('auth-password-hint').hidden = login;
+    $('auth-password').autocomplete = login ? 'current-password' : 'new-password';
+    $('auth-form').reset();
+    $('auth-username').focus();
+  }
+
+  let authBusy = false;
+  async function handleAuth(e) {
+    e.preventDefault();
+    if (authBusy) return;
+    const username = $('auth-username').value.trim();
+    const pwd = $('auth-password').value;
+    if (!username || !pwd) { toast('Заполните логин и пароль', 'error'); (username ? $('auth-password') : $('auth-username')).focus(); return; }
+    authBusy = true; $('auth-submit').disabled = true;
+    try {
+      if (state.authMode === 'login') {
+        const user = state.users.find((u) => u.username.toLowerCase() === username.toLowerCase());
+        if (user && await verifyPassword(pwd, user)) {
+          if (typeof user.passwordHash !== 'string') { user.passwordHash = await hashPassword(pwd); delete user.password; save('users'); }
+          login(user);
+        } else {
+          toast('Неверный логин или пароль', 'error');
+          $('auth-password').value = ''; $('auth-password').focus();
+        }
+      } else {
+        if (!/^[\p{L}\p{N}_.-]{3,32}$/u.test(username)) { toast('Логин: 3–32 символа (буквы, цифры, «_», «-», «.»)', 'error'); $('auth-username').focus(); return; }
+        if (pwd.length < 4 || !pwd.trim()) { toast('Пароль должен содержать не менее 4 символов', 'error'); $('auth-password').focus(); return; }
+        if (state.users.some((u) => u.username.toLowerCase() === username.toLowerCase())) { toast('Пользователь с таким именем уже существует', 'error'); $('auth-username').focus(); return; }
+        const user = { id: nextId(state.users), username, passwordHash: await hashPassword(pwd), role: ROLES.client };
+        state.users.push(user);
+        save('users');
+        toast('Регистрация успешна');
+        login(user);
+      }
+    } catch (err) {
+      console.warn(err);
+      toast('Ошибка авторизации. Попробуйте ещё раз', 'error');
+    } finally {
+      authBusy = false; $('auth-submit').disabled = false;
+    }
+  }
+
+  function login(user) {
+    state.user = { id: user.id, username: user.username, role: user.role };
+    Store.write(KEYS.session, { id: user.id });
+    $('auth-form').reset();
+    toast(`Добро пожаловать, ${user.username}!`);
+    navigate(HOME_VIEW[user.role] || 'catalog', { focus: true });
+  }
+
+  function logout() {
+    state.user = null;
+    Store.remove(KEYS.session);
+    closeAllModals();
+    if (state.authMode !== 'login') setAuthMode('login');
+    navigate('catalog', { focus: true });
+    toast('Вы вышли из системы', 'info');
+  }
+
+  // ---------- Каталог ----------
+  function renderCatalog() {
+    const q = $('search-input').value.trim().toLowerCase();
+    const cat = $('category-filter').value;
+    const list = state.equipment.filter((i) => (cat === 'Все' || i.category === cat) && (!q || i.name.toLowerCase().includes(q)));
+    const grid = $('catalog-grid');
+    $('catalog-count').textContent = list.length ? `Найдено позиций: ${list.length}` : '';
+    if (!list.length) { grid.innerHTML = '<div class="empty">Ничего не найдено</div>'; return; }
+    grid.innerHTML = list.map((i) => {
+      const inStock = i.stock > 0;
+      return `<article class="card">
+        <div class="card-media">
+          <img src="${esc(imageFor(i))}" alt="${esc(i.name)}" loading="lazy" decoding="async" data-fallback="${esc(placeholder(i.name, i.category))}">
+          <span class="chip">${esc(i.category)}</span>
+          ${inStock ? '' : '<span class="out-of-stock">Нет в наличии</span>'}
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">${esc(i.name)}</h3>
+          <div class="card-meta">
+            <div><span class="price">${money(i.price)}</span> <span class="per">/ сутки</span></div>
+            ${inStock ? `<span class="stock-note">в наличии: ${i.stock}</span>` : ''}
+          </div>
+          <button type="button" class="btn ${inStock ? 'btn-dark' : ''}" data-action="book" data-id="${i.id}" ${inStock ? '' : 'disabled'} aria-label="${inStock ? 'Арендовать' : 'Недоступно'}: ${esc(i.name)}">${inStock ? 'Арендовать' : 'Недоступно'}</button>
+        </div>
+      </article>`;
+    }).join('');
+  }
+
+  // ---------- Бронирование ----------
+  function openBooking(itemId, trigger) {
+    if (!state.user) { toast('Для бронирования необходимо войти в систему', 'info'); navigate('auth'); return; }
+    if (!hasRole(ROLES.client)) { toast('Бронирование доступно только для клиентов', 'error'); return; }
+    const item = itemById(itemId);
+    if (!item) { toast('Позиция не найдена', 'error'); renderCatalog(); return; }
+    if (item.stock <= 0) { toast('Товар закончился на складе', 'error'); renderCatalog(); return; }
+    state.bookingItemId = item.id;
+    $('book-modal-title').textContent = item.name;
+    $('book-modal-price').textContent = `${money(item.price)} / сутки`;
+    const img = $('book-modal-img');
+    img.dataset.fallback = placeholder(item.name, item.category);
+    img.src = imageFor(item);
+    img.alt = item.name;
+    const today = todayISO();
+    const s = $('book-start-date'), en = $('book-end-date');
+    s.min = today; s.value = today;
+    en.min = today; en.value = addDaysISO(today, 1);
+    updateTotal();
+    openModal('modal-booking', trigger);
+  }
+
+  function bookingQuote() {
+    const item = itemById(state.bookingItemId);
+    const days = rentalDays($('book-start-date').value, $('book-end-date').value);
+    return { item, days, total: item ? days * item.price : 0 };
+  }
+  function onStartDateChange() {
+    const s = $('book-start-date'), en = $('book-end-date');
+    if (s.value) {
+      en.min = s.value;
+      if (!en.value || en.value < s.value) en.value = s.value;
+    }
+    updateTotal();
+  }
+  function updateTotal() {
+    const { days, total } = bookingQuote();
+    $('book-total-cost').textContent = money(total);
+    $('book-total-days').textContent = days ? `${days} ${plural(days, 'сутки', 'суток', 'суток')}` : 'Укажите корректный период';
+  }
+  const plural = (n, one, few, many) => { const m10 = n % 10, m100 = n % 100; return m10 === 1 && m100 !== 11 ? one : (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14) ? few : many); };
+
+  function submitBooking(e) {
+    e.preventDefault();
+    if (!hasRole(ROLES.client)) { closeModal(); navigate('auth'); return; }
+    const start = $('book-start-date').value, end = $('book-end-date').value;
+    if (!parseISO(start) || !parseISO(end)) { toast('Укажите даты аренды', 'error'); return; }
+    if (start < todayISO()) { toast('Дата начала не может быть в прошлом', 'error'); return; }
+    if (end < start) { toast('Дата окончания не может быть раньше даты начала', 'error'); return; }
+    const { item, days, total } = bookingQuote();
+    if (!item) { toast('Позиция больше не доступна', 'error'); closeModal(); renderCatalog(); return; }
+    if (item.stock <= 0) { toast('Товар закончился на складе', 'error'); return; }
+    item.stock -= 1;
+    state.bookings.push({
+      id: nextId(state.bookings), equipmentId: item.id, userId: state.user.id,
+      startDate: start, endDate: end, days, totalCost: total,
+      status: STATUS.PENDING, dateCreated: new Date().toISOString()
+    });
+    save('equipment'); save('bookings');
+    closeModal();
+    toast('Оборудование успешно забронировано!');
+    navigate('client', { focus: true });
+  }
+
+  function cancelBooking(id) {
+    const b = bookingById(id);
+    if (!b || b.status !== STATUS.PENDING) return;
+    const allowed = hasRole(ROLES.manager) || (hasRole(ROLES.client) && b.userId === state.user.id);
+    if (!allowed) return;
+    if (!confirm('Отменить это бронирование?')) return;
+    b.status = STATUS.CANCELLED;
+    const item = itemById(b.equipmentId);
+    if (item) { item.stock += 1; save('equipment'); }
+    save('bookings');
+    renderView();
+    toast('Бронирование отменено', 'info');
+  }
+
+  const BADGE = {
+    [STATUS.PENDING]: ['pending', 'Ожидает'], [STATUS.ISSUED]: ['active', 'В аренде'],
+    [STATUS.RETURNED]: ['done', 'Возвращено'], [STATUS.CANCELLED]: ['cancel', 'Отменено']
+  };
+  const badge = (status) => { const [cls, label] = BADGE[status] || ['done', status]; return `<span class="badge ${cls}">${esc(label)}</span>`; };
+  const isOverdue = (b) => b.status === STATUS.ISSUED && b.endDate < todayISO();
+  const returnNote = (b) => (b.status === STATUS.RETURNED && (b.conditionNote || b.fine > 0)
+    ? `<div class="muted xs">${esc(b.conditionNote || '')}${b.fine > 0 ? ` · штраф ${money(b.fine)}` : ''}</div>` : '');
+
+  function renderClient() {
+    const tbody = $('client-bookings-list');
+    const list = state.bookings.filter((b) => b.userId === state.user.id).slice().reverse();
+    if (!list.length) { tbody.innerHTML = '<tr><td colspan="5" class="td-empty">У вас пока нет бронирований.</td></tr>'; return; }
+    tbody.innerHTML = list.map((b) => {
+      const item = itemById(b.equipmentId);
+      return `<tr>
+        <td class="strong">${item ? esc(item.name) : 'Неизвестно'}</td>
+        <td class="muted nowrap">${formatDate(b.startDate)} – ${formatDate(b.endDate)}${isOverdue(b) ? '<div class="overdue xs">Просрочен возврат</div>' : ''}</td>
+        <td class="strong nowrap">${money(b.totalCost)}</td>
+        <td>${badge(b.status)}${returnNote(b)}</td>
+        <td class="ta-right">${b.status === STATUS.PENDING ? `<button type="button" class="btn-sm red" data-action="cancel-booking" data-id="${b.id}">Отменить</button>` : ''}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  // ---------- Менеджер ----------
+  function renderManager() {
+    const tbody = $('manager-bookings-list');
+    const f = $('manager-filter').value;
+    const all = state.bookings.slice().reverse();
+    const list = f === 'all' ? all : all.filter((b) => b.status === f);
+    if (!list.length) { tbody.innerHTML = `<tr><td colspan="5" class="td-empty">${all.length ? 'Нет бронирований с выбранным статусом.' : 'Бронирований нет.'}</td></tr>`; return; }
+    tbody.innerHTML = list.map((b) => {
+      const item = itemById(b.equipmentId), user = userById(b.userId);
+      let actions;
+      if (b.status === STATUS.PENDING) {
+        actions = `<span class="actions"><button type="button" class="btn-sm indigo" data-action="issue" data-id="${b.id}">Выдать</button><button type="button" class="btn-sm red" data-action="cancel-booking" data-id="${b.id}">Отменить</button></span>`;
+      } else if (b.status === STATUS.ISSUED) {
+        actions = `<button type="button" class="btn-sm green" data-action="open-return" data-id="${b.id}">Принять</button>`;
+      } else {
+        actions = '<span class="muted xs">Завершено</span>';
+      }
+      return `<tr>
+        <td><div class="muted xs">#${esc(String(b.id).slice(-6))}</div><div class="strong">${user ? esc(user.username) : 'Удален'}</div></td>
+        <td>${item ? esc(item.name) : 'Удалено'}<div class="muted xs">${money(b.totalCost)}</div></td>
+        <td class="muted xs nowrap">${formatDate(b.startDate)}<br>${formatDate(b.endDate)}${isOverdue(b) ? '<div class="overdue">Просрочено</div>' : ''}</td>
+        <td>${badge(b.status)}${returnNote(b)}</td>
+        <td class="ta-right">${actions}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function issueBooking(id) {
+    if (!hasRole(ROLES.manager)) return;
+    const b = bookingById(id);
+    if (!b || b.status !== STATUS.PENDING) return;
+    b.status = STATUS.ISSUED;
+    b.issuedAt = new Date().toISOString();
+    save('bookings');
+    renderManager();
+    toast('Статус изменен на "Выдано"');
+  }
+
+  function openReturn(id, trigger) {
+    const b = bookingById(id);
+    if (!hasRole(ROLES.manager) || !b || b.status !== STATUS.ISSUED) return;
+    state.returnBookingId = b.id;
+    const item = itemById(b.equipmentId), user = userById(b.userId);
+    $('return-info').textContent = `${item ? item.name : 'Удалённая позиция'} · ${user ? user.username : 'клиент удалён'} · ${formatDate(b.startDate)} – ${formatDate(b.endDate)}`;
+    $('return-form').reset();
+    $('return-fine').value = 0;
+    openModal('modal-return', trigger);
+  }
+
+  function submitReturn(e) {
+    e.preventDefault();
+    if (!hasRole(ROLES.manager)) return;
+    const b = bookingById(state.returnBookingId);
+    if (!b || b.status !== STATUS.ISSUED) { closeModal(); renderManager(); return; }
+    const condition = $('return-condition').value;
+    const fineRaw = $('return-fine').value.trim();
+    const fine = fineRaw === '' ? 0 : Number(fineRaw);
+    if (!Number.isFinite(fine) || fine < 0) { toast('Штраф должен быть неотрицательным числом', 'error'); $('return-fine').focus(); return; }
+    b.status = STATUS.RETURNED;
+    b.conditionNote = condition;
+    b.fine = fine;
+    b.returnedAt = new Date().toISOString();
+    if (condition !== LOST) {
+      const item = itemById(b.equipmentId);
+      if (item) { item.stock += 1; save('equipment'); }
+    }
+    save('bookings');
+    closeModal();
+    renderManager();
+    toast(`Оборудование принято.${fine > 0 ? ` Начислен штраф: ${money(fine)}.` : ''}`);
+  }
+
+  // ---------- Админ ----------
+  function renderAdmin() {
+    const tbody = $('admin-equipment-list');
+    if (!state.equipment.length) { tbody.innerHTML = '<tr><td colspan="6" class="td-empty">Склад пуст.</td></tr>'; return; }
+    tbody.innerHTML = state.equipment.map((i) => `<tr>
+        <td class="muted xs">#${esc(String(i.id).slice(-6))}</td>
+        <td class="strong">${esc(i.name)}</td>
+        <td class="muted">${esc(i.category)}</td>
+        <td class="nowrap">${money(i.price)}</td>
+        <td class="nowrap ${i.stock > 0 ? 'stock-ok' : 'stock-none'}">${i.stock} шт</td>
+        <td class="ta-right nowrap">
+          <button type="button" class="icon-btn edit" data-action="edit-equipment" data-id="${i.id}" aria-label="Редактировать: ${esc(i.name)}" title="Редактировать"><svg class="icon" aria-hidden="true"><use href="#i-pen"/></svg></button>
+          <button type="button" class="icon-btn del" data-action="delete-equipment" data-id="${i.id}" aria-label="Удалить: ${esc(i.name)}" title="Удалить"><svg class="icon" aria-hidden="true"><use href="#i-trash"/></svg></button>
+        </td>
+      </tr>`).join('');
+  }
+
+  function openEquipment(id, trigger) {
+    if (!hasRole(ROLES.admin)) return;
+    $('equipment-form').reset();
+    state.eqEditId = null;
+    $('eq-modal-title').textContent = 'Добавить оборудование';
+    const item = id != null ? itemById(id) : null;
+    if (item) {
+      state.eqEditId = item.id;
+      $('eq-modal-title').textContent = 'Редактировать позицию';
+      $('eq-name').value = item.name;
+      if (!CATEGORIES.includes(item.category) && item.category) addOption($('eq-category'), item.category);
+      $('eq-category').value = item.category;
+      $('eq-price').value = item.price;
+      $('eq-stock').value = item.stock;
+      $('eq-image').value = item.image || '';
+    }
+    openModal('modal-equipment', trigger);
+  }
+
+  function saveEquipment(e) {
+    e.preventDefault();
+    if (!hasRole(ROLES.admin)) return;
+    const name = $('eq-name').value.trim().replace(/\s+/g, ' ');
+    const price = Number($('eq-price').value);
+    const stockStr = $('eq-stock').value;
+    const stock = Number(stockStr);
+    const image = $('eq-image').value.trim();
+    const fail = (msg, el) => { toast(msg, 'error'); el.focus(); };
+    if (!name) return fail('Укажите наименование', $('eq-name'));
+    if ($('eq-price').value === '' || !Number.isFinite(price) || price < 0) return fail('Цена должна быть неотрицательным числом', $('eq-price'));
+    if (stockStr === '' || !Number.isInteger(stock) || stock < 0) return fail('Остаток должен быть целым неотрицательным числом', $('eq-stock'));
+    if (!isSafeImageUrl(image)) return fail('URL изображения должен начинаться с http:// или https://', $('eq-image'));
+    const data = { name, category: $('eq-category').value, price, stock, image };
+    if (state.eqEditId != null) {
+      const item = itemById(state.eqEditId);
+      if (!item) { toast('Позиция была удалена', 'error'); closeModal(); renderAdmin(); return; }
+      Object.assign(item, data);
+      toast('Изменения сохранены');
+    } else {
+      state.equipment.push({ id: nextId(state.equipment), ...data });
+      toast('Позиция добавлена');
+    }
+    save('equipment');
+    closeModal();
+    renderAdmin();
+  }
+
+  function deleteEquipment(id) {
+    if (!hasRole(ROLES.admin)) return;
+    const item = itemById(id);
+    if (!item) return;
+    const active = state.bookings.filter((b) => b.equipmentId === id && (b.status === STATUS.PENDING || b.status === STATUS.ISSUED)).length;
+    if (active) { toast(`Нельзя удалить: есть активные бронирования (${active})`, 'error'); return; }
+    if (!confirm(`Вы уверены, что хотите удалить «${item.name}»?`)) return;
+    state.equipment = state.equipment.filter((i) => i.id !== id);
+    save('equipment');
+    renderAdmin();
+    toast('Позиция удалена');
+  }
+
+  // ---------- Модальные окна ----------
+  let activeModal = null, lastFocus = null;
+  const modalTimers = new Map();
+  const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+  function openModal(id, trigger) {
+    if (activeModal && activeModal.id !== id) closeModal(true);
+    const m = $(id);
+    clearTimeout(modalTimers.get(id));
+    lastFocus = trigger || document.activeElement;
+    m.hidden = false;
+    void m.offsetWidth; // reflow для анимации
+    m.classList.add('open');
+    activeModal = m;
+    document.body.style.overflow = 'hidden';
+    const first = m.querySelector('form ' + FOCUSABLE) || m.querySelector(FOCUSABLE);
+    if (first) first.focus();
+  }
+
+  function closeModal(instant = false) {
+    const m = activeModal;
+    if (!m) return;
+    activeModal = null;
+    m.classList.remove('open');
+    document.body.style.overflow = '';
+    const hide = () => { m.hidden = true; };
+    if (instant) hide(); else modalTimers.set(m.id, setTimeout(hide, 250));
+    if (lastFocus && document.contains(lastFocus)) lastFocus.focus();
+    lastFocus = null;
+  }
+  function closeAllModals() { if (activeModal) closeModal(true); }
+
+  function trapFocus(e) {
+    if (!activeModal || e.key !== 'Tab') return;
+    const els = Array.from(activeModal.querySelectorAll(FOCUSABLE)).filter((el) => el.offsetParent !== null);
+    if (!els.length) return;
+    const first = els[0], last = els[els.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+
+  function addOption(sel, value, label = value) {
+    if ([...sel.options].some((o) => o.value === value)) return;
+    const o = document.createElement('option'); o.value = value; o.textContent = label; sel.appendChild(o);
+  }
+
+  // ---------- События ----------
+  const ACTIONS = {
+    nav: (el) => navigate(el.dataset.view, { focus: true }),
+    logout: () => logout(),
+    'toggle-auth': () => setAuthMode(state.authMode === 'login' ? 'register' : 'login'),
+    book: (el, id) => openBooking(id, el),
+    'cancel-booking': (el, id) => cancelBooking(id),
+    issue: (el, id) => issueBooking(id),
+    'open-return': (el, id) => openReturn(id, el),
+    'add-equipment': (el) => openEquipment(null, el),
+    'edit-equipment': (el, id) => openEquipment(id, el),
+    'delete-equipment': (el, id) => deleteEquipment(id),
+    'close-modal': () => closeModal()
+  };
+
+  function bindEvents() {
+    document.addEventListener('click', (e) => {
+      const el = e.target.closest('[data-action]');
+      if (el) {
+        const fn = ACTIONS[el.dataset.action];
+        if (fn) { fn(el, el.dataset.id != null ? Number(el.dataset.id) : undefined); return; }
+      }
+      if (activeModal && e.target === activeModal) closeModal(); // клик по подложке
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && activeModal) { e.preventDefault(); closeModal(); }
+      trapFocus(e);
+    });
+    // Подмена битых изображений локальной заглушкой
+    document.addEventListener('error', (e) => {
+      const img = e.target;
+      if (img.tagName === 'IMG' && img.dataset.fallback && img.src !== img.dataset.fallback) img.src = img.dataset.fallback;
+    }, true);
+
+    let searchTimer;
+    $('search-input').addEventListener('input', () => { clearTimeout(searchTimer); searchTimer = setTimeout(renderCatalog, 120); });
+    $('category-filter').addEventListener('change', renderCatalog);
+    $('manager-filter').addEventListener('change', renderManager);
+    $('auth-form').addEventListener('submit', handleAuth);
+    $('booking-form').addEventListener('submit', submitBooking);
+    $('book-start-date').addEventListener('change', onStartDateChange);
+    $('book-end-date').addEventListener('change', updateTotal);
+    $('book-start-date').addEventListener('input', onStartDateChange);
+    $('book-end-date').addEventListener('input', updateTotal);
+    $('return-form').addEventListener('submit', submitReturn);
+    $('equipment-form').addEventListener('submit', saveEquipment);
+
+    // Синхронизация между вкладками
+    window.addEventListener('storage', (e) => {
+      if (e.key && !Object.values(KEYS).includes(e.key)) return;
+      const hadUser = state.user && state.user.id;
+      load();
+      if ((state.user && state.user.id) !== hadUser) closeAllModals();
+      navigate(state.view);
+    });
+  }
+
+  function populateSelects() {
+    const filter = $('category-filter');
+    addOption(filter, 'Все', 'Все категории');
+    CATEGORIES.forEach((c) => { addOption(filter, c); addOption($('eq-category'), c); });
+  }
+
+  async function init() {
+    populateSelects();
+    load();
+    bindEvents();
+    navigate('catalog');
+    if (!Store.available) toast('Хранилище браузера недоступно: данные не сохранятся после перезагрузки', 'info');
+    try { await migratePasswords(); } catch (err) { console.warn('Миграция паролей не выполнена', err); }
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+</body>
+</html>
